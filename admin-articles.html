@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>المقالات — لوحة مدير المنصة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--teal:#0C4A45;--gold:#B5862A;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--red:#B23B3B;--green:#1F7A4D;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 60px;}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:18px;}
+  .brand .logo{width:42px;height:42px;border-radius:12px;background:var(--teal);display:flex;align-items:center;justify-content:center;}
+  .brand .nm{font-weight:700;}
+  .muted{color:var(--sub);font-size:13px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;}
+  h2{font-size:17px;color:var(--teal);margin-bottom:12px;}
+  label{display:block;font-size:13px;color:var(--sub);margin:8px 0 4px;font-weight:600;}
+  input,textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#FAFAF7;font-family:inherit;}
+  textarea{min-height:120px;resize:vertical;}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;padding:10px 16px;font-size:14px;}
+  .btn{background:var(--teal);color:#fff;}
+  .ghost{background:#fff;color:var(--teal);border:1px solid var(--line);}
+  .danger{background:#fff;color:var(--red);border:1px solid #E7C9C9;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;}
+  th,td{border-bottom:1px solid var(--line);padding:9px 6px;text-align:right;}
+  th{color:var(--sub);font-weight:600;}
+  .pill{border-radius:999px;padding:3px 11px;font-size:12px;font-weight:700;}
+  .pub{background:#E3F2E8;color:var(--green);}
+  .draft{background:#EFEBE0;color:#7A5B16;}
+  .err{color:var(--red);font-size:13px;}
+  .nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .nav a{border-radius:10px;padding:9px 16px;font-weight:700;font-size:14px;text-decoration:none;background:#fff;color:var(--teal);border:1px solid var(--teal);}
+  .nav a.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div>
+    <div><div class="nm">لوحة مدير المنصة</div><div class="muted">المقالات المنشورة على صفحة الهبوط</div></div>
+  </div>
+
+  <div class="card hidden" id="loginCard">
+    <h2>تسجيل الدخول</h2>
+    <div class="err" id="loginErr"></div>
+    <label>اسم المستخدم</label><input id="u" value="super" />
+    <label>كلمة المرور</label><input id="p" type="password" value="super123" />
+    <div style="margin-top:12px"><button class="btn" onclick="doLogin()">دخول</button></div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="nav">
+      <a href="admin.html">المكاتب</a>
+      <a class="active" href="admin-articles.html">المقالات</a>
+      <a href="admin-settings.html">الإعدادات</a>
+    </div>
+
+    <div class="card">
+      <h2 id="formTitle">مقال جديد</h2>
+      <div class="err" id="fErr"></div>
+      <input type="hidden" id="aid" />
+      <label>العنوان</label><input id="title" placeholder="عنوان المقال" />
+      <label>مقتطف قصير (يظهر في القائمة)</label><input id="excerpt" placeholder="وصف موجز" />
+      <label>المحتوى</label><textarea id="body" placeholder="نص المقال الكامل..."></textarea>
+      <label>الحالة</label>
+      <select id="status"><option value="draft">مسودة</option><option value="published">منشور</option></select>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn" onclick="save()">حفظ</button>
+        <button class="ghost" onclick="resetForm()">جديد</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>كل المقالات</h2>
+      <div id="list" class="muted">…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API=location.origin;
+let token=sessionStorage.getItem("rms_admin_token")||null;
+const $=(id)=>document.getElementById(id);
+async function api(path,opts={}){
+  const r=await fetch(API+path,{...opts,headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,...(opts.headers||{})}});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw Object.assign(new Error(d.error||"خطأ"),{status:r.status,data:d});
+  return d;
+}
+async function doLogin(){
+  $("loginErr").textContent="";
+  try{const d=await api("/api/auth/login",{method:"POST",body:JSON.stringify({username:$("u").value,password:$("p").value})});
+    token=d.token;sessionStorage.setItem("rms_admin_token",token);enter();}
+  catch(e){$("loginErr").textContent=e.message;}
+}
+function enter(){$("loginCard").classList.add("hidden");$("app").classList.remove("hidden");load();}
+function resetForm(){$("aid").value="";$("title").value="";$("excerpt").value="";$("body").value="";$("status").value="draft";$("formTitle").textContent="مقال جديد";$("fErr").textContent="";}
+async function save(){
+  $("fErr").textContent="";
+  const id=$("aid").value;
+  const payload={title:$("title").value.trim(),excerpt:$("excerpt").value.trim(),body:$("body").value,status:$("status").value};
+  if(!payload.title){$("fErr").textContent="العنوان مطلوب";return;}
+  try{
+    if(id) await api("/api/admin/articles/"+id,{method:"PATCH",body:JSON.stringify(payload)});
+    else await api("/api/admin/articles",{method:"POST",body:JSON.stringify(payload)});
+    resetForm();load();
+  }catch(e){$("fErr").textContent=e.message;}
+}
+async function edit(id){
+  const list=await api("/api/admin/articles");
+  const a=list.find(x=>x.id===id);if(!a)return;
+  // نحتاج المحتوى الكامل
+  const full=await api("/api/admin/articles").then(()=>a); // القائمة لا تتضمن body؛ نجلب عبر العام إن منشور
+  $("aid").value=a.id;$("title").value=a.title;$("excerpt").value=a.excerpt||"";$("status").value=a.status;$("formTitle").textContent="تعديل المقال";
+  try{const pub=await fetch(API+"/api/public/articles/"+id).then(r=>r.ok?r.json():null);$("body").value=pub?pub.body:"";}catch(e){$("body").value="";}
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+async function toggle(id,status){await api("/api/admin/articles/"+id,{method:"PATCH",body:JSON.stringify({status:status==="published"?"draft":"published"})});load();}
+async function del(id){if(!confirm("حذف المقال؟"))return;await api("/api/admin/articles/"+id,{method:"DELETE"});load();}
+async function load(){
+  const a=await api("/api/admin/articles");
+  if(!a.length){$("list").innerHTML='<div class="muted">لا توجد مقالات بعد.</div>';return;}
+  $("list").innerHTML=`<table><thead><tr><th>العنوان</th><th>الحالة</th><th>التاريخ</th><th></th></tr></thead><tbody>`+
+    a.map(x=>`<tr><td style="font-weight:600">${x.title}</td>
+      <td><span class="pill ${x.status==='published'?'pub':'draft'}">${x.status==='published'?'منشور':'مسودة'}</span></td>
+      <td class="muted">${x.created_at}</td>
+      <td style="white-space:nowrap">
+        <button class="ghost" style="padding:5px 10px;font-size:12px" onclick="edit(${x.id})">تعديل</button>
+        <button class="ghost" style="padding:5px 10px;font-size:12px" onclick="toggle(${x.id},'${x.status}')">${x.status==='published'?'إلغاء النشر':'نشر'}</button>
+        <button class="danger" style="padding:5px 10px;font-size:12px" onclick="del(${x.id})">حذف</button>
+      </td></tr>`).join("")+`</tbody></table>`;
+}
+(function(){ if(token) enter(); else $("loginCard").classList.remove("hidden"); })();
+</script>
+</body>
+</html>

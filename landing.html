@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>نظام إدارة مكاتب الاستقدام | الاستقدام الذكي — Smart Istiqdam</title>
+<meta name="description" content="منصة سحابية متكاملة لإدارة مكاتب الاستقدام: متابعة دورة الطلب من الاستفسار حتى التسليم، قاعدة عمالة وكتالوج حجز إلكتروني، بوابة متابعة للعميل، وإدارة عقود ومستندات ومالية وضمان. اطلب عرضاً تجريبياً مجانياً." />
+<meta name="keywords" content="نظام إدارة استقدام, برنامج مكاتب استقدام, إدارة عقود استقدام, برنامج محاسبي لمكاتب الاستقدام, نظام إدارة استقدام في الرياض, كتالوج عمالة, متابعة طلب الاستقدام" />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#0C4A45" />
+<link rel="canonical" href="https://smartistiqdam.com/" />
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="ar_SA" />
+<meta property="og:site_name" content="الاستقدام الذكي" />
+<meta property="og:title" content="نظام إدارة مكاتب الاستقدام المتكامل | الاستقدام الذكي" />
+<meta property="og:description" content="حوّل مكتبك إلى العمل الرقمي: إدارة عقود، متابعة لحظية للطلبات، كتالوج عمالة وحجز إلكتروني، وتقارير أداء فورية." />
+<meta property="og:url" content="https://smartistiqdam.com/" />
+<meta property="og:image" content="https://smartistiqdam.com/assets/hero-dashboard.webp" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="نظام إدارة مكاتب الاستقدام | الاستقدام الذكي" />
+<meta name="twitter:description" content="منصة سحابية لإدارة مكاتب الاستقدام بكفاءة: عقود، مستندات، عمالة، حجز إلكتروني، ومتابعة لحظية." />
+<meta name="twitter:image" content="https://smartistiqdam.com/assets/hero-dashboard.webp" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "الاستقدام الذكي — Smart Istiqdam",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "منصة سحابية متكاملة لإدارة مكاتب الاستقدام في السعودية: دورة الطلب، قاعدة العمالة والكتالوج، الحجز الإلكتروني، بوابة متابعة العميل، وإدارة العقود والمالية والضمان.",
+  "url": "https://smartistiqdam.com/",
+  "inLanguage": "ar",
+  "offers": [
+    { "@type": "Offer", "name": "اشتراك شهري", "price": "200", "priceCurrency": "SAR" },
+    { "@type": "Offer", "name": "اشتراك سنوي", "price": "800", "priceCurrency": "SAR" },
+    { "@type": "Offer", "name": "اشتراك مدى الحياة", "price": "2000", "priceCurrency": "SAR" }
+  ]
+}
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--teal:#0C4A45;--teal2:#0F5A53;--gold:#B5862A;--gold2:#D8B25A;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E6E1D6;}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);line-height:1.8;}
+  a{text-decoration:none;color:inherit;}
+  .container{max-width:1120px;margin:0 auto;padding:0 20px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;border-radius:12px;padding:13px 22px;font-weight:700;font-size:15px;cursor:pointer;border:none;transition:transform .15s,box-shadow .15s;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-gold{background:var(--gold);color:#fff;box-shadow:0 8px 22px rgba(181,134,42,.28);}
+  .btn-teal{background:var(--teal);color:#fff;}
+  .btn-ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal);}
+  .btn-light{background:#fff;color:var(--teal);}
+  /* header */
+  header{position:sticky;top:0;z-index:50;background:rgba(244,242,236,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px;}
+  .brand{display:flex;align-items:center;gap:11px;}
+  .brand .logo{width:42px;height:42px;border-radius:12px;background:var(--teal);display:flex;align-items:center;justify-content:center;}
+  .brand .nm{font-weight:700;color:var(--teal);font-size:17px;line-height:1.1;}
+  .brand .en{font-size:10px;letter-spacing:.22em;color:var(--gold);font-weight:600;}
+  nav .links{display:flex;align-items:center;gap:26px;}
+  nav .links a{font-size:14.5px;color:var(--ink);font-weight:500;}
+  nav .links a:hover{color:var(--teal);}
+  @media(max-width:860px){nav .links{display:none;}}
+  /* hero */
+  .hero{padding:64px 0 40px;}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;}
+  @media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:28px;}}
+  .eyebrow{display:inline-block;background:#E3EEEC;color:var(--teal);font-weight:700;font-size:13px;border-radius:999px;padding:6px 14px;margin-bottom:18px;}
+  h1{font-size:40px;line-height:1.3;color:var(--teal);margin-bottom:16px;}
+  @media(max-width:860px){h1{font-size:30px;}}
+  .hero p.lead{font-size:17px;color:var(--sub);margin-bottom:26px;max-width:540px;}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
+  .hero-visual{position:relative;}
+  .hero-visual img{width:100%;border-radius:16px;border:1px solid var(--line);box-shadow:0 24px 60px rgba(12,74,69,.18);}
+  .badge-float{position:absolute;bottom:-16px;inset-inline-start:-12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:0 12px 30px rgba(0,0,0,.10);font-weight:700;color:var(--teal);font-size:13px;}
+  .badge-float b{color:var(--gold);}
+  /* trust strip */
+  .trust{display:flex;justify-content:center;gap:34px;flex-wrap:wrap;padding:24px 0 8px;}
+  .trust .item{text-align:center;}
+  .trust .n{font-size:26px;font-weight:800;color:var(--teal);}
+  .trust .l{font-size:13px;color:var(--sub);}
+  /* sections */
+  section.block{padding:56px 0;}
+  .sec-head{text-align:center;max-width:680px;margin:0 auto 36px;}
+  .sec-head h2{font-size:28px;color:var(--teal);margin-bottom:10px;}
+  .sec-head p{color:var(--sub);font-size:16px;}
+  .kicker{color:var(--gold);font-weight:700;font-size:13px;letter-spacing:.08em;margin-bottom:6px;}
+  /* problems */
+  .prob-grid,.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media(max-width:860px){.prob-grid,.feat-grid{grid-template-columns:1fr;}}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;}
+  .pcard .ic{width:46px;height:46px;border-radius:12px;background:#FBE9E7;color:#B23B3B;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
+  .pcard h3{font-size:17px;color:var(--ink);margin-bottom:6px;}
+  .pcard p{color:var(--sub);font-size:14px;}
+  /* features */
+  .feat-grid .fcard .ic{background:#E3EEEC;color:var(--teal);}
+  .feat-grid .fcard h3{color:var(--teal);}
+  /* how it works */
+  .steps{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:stretch;}
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;flex:1 1 130px;min-width:130px;text-align:center;position:relative;}
+  .step .num{width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 8px;font-size:14px;}
+  .step .t{font-weight:700;font-size:14px;color:var(--ink);}
+  .step .d{font-size:12px;color:var(--sub);margin-top:3px;}
+  /* pricing */
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media(max-width:860px){.price-grid{grid-template-columns:1fr;}}
+  .price{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:26px;text-align:center;display:flex;flex-direction:column;}
+  .price.feat{border-color:var(--gold);box-shadow:0 14px 36px rgba(181,134,42,.14);position:relative;}
+  .price.feat::before{content:"الأكثر طلباً";position:absolute;top:-12px;inset-inline-start:50%;transform:translateX(50%);background:var(--gold);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:4px 14px;}
+  .price .nm{font-weight:700;color:var(--teal);font-size:18px;}
+  .price .amt{font-size:38px;font-weight:800;color:var(--ink);margin:10px 0 0;}
+  .price .amt small{font-size:14px;color:var(--sub);font-weight:600;}
+  .price .vat{font-size:12px;color:var(--sub);margin-bottom:16px;}
+  .price ul{list-style:none;text-align:start;margin:8px 0 18px;}
+  .price li{font-size:14px;color:var(--ink);padding:5px 0;padding-inline-start:24px;position:relative;}
+  .price li::before{content:"✓";position:absolute;inset-inline-start:0;color:var(--teal);font-weight:800;}
+  .price .btn{width:100%;justify-content:center;margin-top:auto;}
+  /* CTA + form */
+  .cta{background:linear-gradient(135deg,#0C4A45,#11635B);color:#fff;border-radius:24px;padding:42px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;}
+  @media(max-width:860px){.cta{grid-template-columns:1fr;padding:28px;}}
+  .cta h2{color:#fff;font-size:26px;margin-bottom:10px;}
+  .cta p{color:#CFE0DC;}
+  .form{background:#fff;border-radius:16px;padding:22px;}
+  .form label{display:block;font-size:13px;color:var(--sub);margin:8px 0 4px;font-weight:600;}
+  .form input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#FAFAF7;}
+  .form .btn{width:100%;justify-content:center;margin-top:16px;}
+  .form .tiny{font-size:11px;color:var(--sub);text-align:center;margin-top:8px;}
+  /* footer */
+  footer{background:#0B3F3A;color:#CFE0DC;padding:40px 0 24px;margin-top:56px;}
+  .foot-grid{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;}
+  footer h4{color:#fff;font-size:15px;margin-bottom:10px;}
+  footer a{display:block;color:#CFE0DC;font-size:14px;padding:3px 0;}
+  footer a:hover{color:#fff;}
+  .copy{border-top:1px solid rgba(255,255,255,.12);margin-top:26px;padding-top:16px;text-align:center;font-size:12px;color:#9FBDB7;}
+  /* floating whatsapp */
+  .wa{position:fixed;bottom:22px;inset-inline-start:22px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(37,211,102,.4);z-index:60;}
+  .wa svg{width:30px;height:30px;fill:#fff;}
+  .gw{width:62%;height:62%;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="#" aria-label="الاستقدام الذكي">
+      <span class="logo"><svg class="gw" viewBox="0 0 64 64" fill="none"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></span>
+      <span><span class="nm">الاستقدام الذكي</span><br><span class="en">SMART ISTIQDAM</span></span>
+    </a>
+    <nav class="links">
+      <a href="#features">المزايا</a>
+      <a href="#how">كيف يعمل</a>
+      <a href="#pricing">الأسعار</a>
+      <a href="#contact">تواصل معنا</a>
+    </nav>
+    <a class="btn btn-teal" href="home.html">تسجيل الدخول</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">منصة سحابية لمكاتب الاستقدام في السعودية</span>
+      <h1>نظام إدارة مكاتب الاستقدام المتكامل</h1>
+      <p class="lead">أدِر مكتبك رقمياً من مكان واحد: متابعة دورة الطلب من الاستفسار حتى التسليم، قاعدة عمالة وكتالوج حجز إلكتروني، بوابة متابعة لعملائك، وإدارة دقيقة للعقود والمستندات والمالية والضمان.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="#contact">اطلب عرضاً تجريبياً مجانياً</a>
+        <a class="btn btn-ghost" href="home.html">تسجيل الدخول</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="assets/hero-dashboard.webp" width="1200" height="1000" alt="لوحة تحكم نظام إدارة مكاتب الاستقدام تعرض مؤشرات الطلبات والمراحل والضمانات" loading="eager" />
+      <div class="badge-float">ضمان <b>٩٠ يوماً</b> · متابعة لحظية</div>
+    </div>
+  </div>
+  <div class="container trust">
+    <div class="item"><div class="n">٧</div><div class="l">مراحل لدورة الطلب</div></div>
+    <div class="item"><div class="n">١٤ يوماً</div><div class="l">تجربة مجانية</div></div>
+    <div class="item"><div class="n">١٠٠٪</div><div class="l">عزل بيانات بين المكاتب</div></div>
+    <div class="item"><div class="n">سحابي</div><div class="l">يعمل من أي جهاز</div></div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="block">
+  <div class="container">
+    <div class="sec-head"><div class="kicker">التحديات</div><h2>هل يعاني مكتبك من الفوضى التشغيلية؟</h2><p>إدارة الاستقدام يدوياً تكلّف وقتاً وعملاء. إليك ما نحلّه:</p></div>
+    <div class="prob-grid">
+      <div class="pcard"><div class="ic">🗂️</div><h3>ضياع الملفات والمستندات</h3><p>عقود وتأشيرات وفواتير متفرقة بين الأوراق والمحادثات، يصعب الرجوع إليها وقت الحاجة.</p></div>
+      <div class="pcard"><div class="ic">⏳</div><h3>تأخير العقود والمتابعة</h3><p>طلبات تتعطّل بلا متابعة، وعملاء يتصلون باستمرار للسؤال عن حالة طلبهم.</p></div>
+      <div class="pcard"><div class="ic">📉</div><h3>غياب الرؤية المالية</h3><p>صعوبة معرفة المبالغ المحصّلة والمتبقية وحالة الضمان لكل طلب في لحظتها.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="block" id="features" style="background:#fff;border-block:1px solid var(--line);">
+  <div class="container">
+    <div class="sec-head"><div class="kicker">الحل</div><h2>كل ما يحتاجه مكتب الاستقدام في منصة واحدة</h2><p>أدوات مصمّمة لطبيعة عمل مكاتب الاستقدام السعودية.</p></div>
+    <div class="feat-grid">
+      <div class="pcard fcard"><div class="ic">🔄</div><h3>متابعة دورة الطلب</h3><p>من الاستفسار → التعاقد → التأشيرة → الاختيار → الإجراءات الخارجية → الوصول → التسليم، مع تنبيه للطلبات المتأخرة.</p></div>
+      <div class="pcard fcard"><div class="ic">🧑‍🍳</div><h3>قاعدة العمالة والكتالوج</h3><p>سجّل العمالة المتوفرة بصورها وسيرها الذاتية، وشارك رابط كتالوج خاص بمكتبك مع عملائك.</p></div>
+      <div class="pcard fcard"><div class="ic">📱</div><h3>الحجز الإلكتروني</h3><p>يحجز العميل العاملة مباشرةً من الكتالوج، ويصل المكتب إشعار فوري بطلب الحجز.</p></div>
+      <div class="pcard fcard"><div class="ic">🔎</div><h3>بوابة متابعة العميل</h3><p>يتابع العميل حالة طلبه بنفسه برقم الطلب — يقلّل الاتصالات ويرفع الرضا.</p></div>
+      <div class="pcard fcard"><div class="ic">📄</div><h3>المستندات والمالية والضمان</h3><p>رفع العقود والتأشيرات والفواتير، حساب الضريبة والمبالغ، وتتبّع ضمان ٩٠ يوماً تلقائياً.</p></div>
+      <div class="pcard fcard"><div class="ic">👥</div><h3>صلاحيات ومكاتب متعددة</h3><p>أدوار دقيقة (مشرف، محاسب، متابعة، استقبال) وعزل كامل لبيانات كل مكتب.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="block" id="how">
+  <div class="container">
+    <div class="sec-head"><div class="kicker">آلية العمل</div><h2>دورة الطلب في سبع مراحل واضحة</h2><p>كل طلب ينتقل بين المراحل بضغطة، مع توثيق المستندات والمالية في كل خطوة.</p></div>
+    <div class="steps">
+      <div class="step"><div class="num">١</div><div class="t">استفسار</div></div>
+      <div class="step"><div class="num">٢</div><div class="t">تعاقد</div></div>
+      <div class="step"><div class="num">٣</div><div class="t">تأشيرة</div></div>
+      <div class="step"><div class="num">٤</div><div class="t">اختيار</div></div>
+      <div class="step"><div class="num">٥</div><div class="t">إجراءات خارجية</div></div>
+      <div class="step"><div class="num">٦</div><div class="t">الوصول</div><div class="d">بدء الضمان</div></div>
+      <div class="step"><div class="num">٧</div><div class="t">التسليم</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="block" id="pricing" style="background:#fff;border-block:1px solid var(--line);">
+  <div class="container">
+    <div class="sec-head"><div class="kicker">الأسعار</div><h2>خطط بسيطة تناسب مكتبك</h2><p>ابدأ بتجربة مجانية ١٤ يوماً — الأسعار شاملة ضريبة القيمة المضافة ١٥٪.</p></div>
+    <div class="price-grid">
+      <div class="price"><div class="nm">شهري</div><div class="amt">٢٣٠ <small>ر.س/شهر</small></div><div class="vat">٢٠٠ + ضريبة ٣٠ ر.س</div><ul><li>كل المزايا</li><li>عدد مستخدمين غير محدود</li><li>دعم فني</li></ul><a class="btn btn-ghost" href="#contact">ابدأ الآن</a></div>
+      <div class="price feat"><div class="nm">سنوي</div><div class="amt">٩٢٠ <small>ر.س/سنة</small></div><div class="vat">٨٠٠ + ضريبة ١٢٠ ر.س · توفير شهرين</div><ul><li>كل مزايا الشهري</li><li>أولوية في الدعم</li><li>أفضل قيمة</li></ul><a class="btn btn-gold" href="#contact">اشترك سنوياً</a></div>
+      <div class="price"><div class="nm">مدى الحياة</div><div class="amt">٢٣٠٠ <small>ر.س مرة واحدة</small></div><div class="vat">٢٠٠٠ + ضريبة ٣٠٠ ر.س</div><ul><li>دفعة واحدة بلا تجديد</li><li>كل المزايا دائماً</li><li>تحديثات مستمرة</li></ul><a class="btn btn-ghost" href="#contact">اقتنِ مدى الحياة</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARTICLES (from admin) -->
+<section class="block" id="articles" style="display:none">
+  <div class="container">
+    <div class="sec-head"><div class="kicker">المدونة</div><h2>مقالات ونصائح لإدارة مكاتب الاستقدام</h2><p>محتوى يساعدك على تطوير عمل مكتبك.</p></div>
+    <div class="feat-grid" id="articlesGrid"></div>
+  </div>
+</section>
+
+<!-- CTA + FORM -->
+<section class="block" id="contact">
+  <div class="container">
+    <div class="cta">
+      <div>
+        <h2>حوّل مكتبك للعمل الرقمي اليوم</h2>
+        <p>اطلب عرضاً تجريبياً مجانياً، وسنتواصل معك لتجهيز حساب مكتبك خلال وقت قصير.</p>
+        <div style="margin-top:18px"><a class="btn btn-light" href="home.html">لديك حساب؟ تسجيل الدخول</a></div>
+      </div>
+      <form class="form" onsubmit="return sendWA(event)">
+        <label for="f-name">الاسم</label>
+        <input id="f-name" required placeholder="اسمك الكريم" />
+        <label for="f-phone">رقم الجوال</label>
+        <input id="f-phone" required inputmode="tel" placeholder="05xxxxxxxx" />
+        <label for="f-office">اسم المكتب</label>
+        <input id="f-office" required placeholder="اسم مكتب الاستقدام" />
+        <button class="btn btn-gold" type="submit">أرسل الطلب عبر واتساب</button>
+        <div class="tiny">نتواصل معك بأسرع وقت — بياناتك تُستخدم للتواصل فقط.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container foot-grid">
+    <div style="max-width:280px">
+      <h4>الاستقدام الذكي</h4>
+      <p style="font-size:13px;color:#9FBDB7">منصة سحابية متكاملة لإدارة مكاتب الاستقدام في المملكة العربية السعودية.</p>
+    </div>
+    <div>
+      <h4>روابط</h4>
+      <a href="#features">المزايا</a>
+      <a href="#how">كيف يعمل</a>
+      <a href="#pricing">الأسعار</a>
+    </div>
+    <div>
+      <h4>الدخول</h4>
+      <a href="home.html">تسجيل الدخول</a>
+      <a href="subscription.html">الاشتراك والدفع</a>
+      <a href="track.html">متابعة طلب</a>
+    </div>
+    <div id="footContact" style="display:none">
+      <h4>تواصل معنا</h4>
+      <a id="fcEmail" href="#"></a>
+      <a id="fcPhone" href="#"></a>
+      <span id="fcCr" style="display:block;font-size:13px;color:#9FBDB7;padding:3px 0"></span>
+    </div>
+  </div>
+  <div class="copy">© <span id="yr"></span> الاستقدام الذكي · Smart Istiqdam — جميع الحقوق محفوظة.</div>
+</footer>
+
+<!-- Floating WhatsApp -->
+<a class="wa" href="https://wa.me/9665XXXXXXXX" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">
+  <svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-4.9 1 1-4.8-.3-.4C5.5 17.6 5 16.3 5 15 5 8.9 9.9 4 16 4s11 4.9 11 11-4.9 11-11 11zm6-8.2c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.3-.7.1c-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-2-1.8-2.3s0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s.1-.4 0-.6l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.8 1.2 3.2 1.4 3.5c.2.2 2.4 3.7 5.9 5.1.8.4 1.5.6 2 .7.8.3 1.6.2 2.2.1.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5l-.6-.4z"/></svg>
+</a>
+
+<script>
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  var WA = "9665XXXXXXXX"; // يُستبدل تلقائياً ببيانات الشركة إن وُجدت
+  function waLink(text){ return "https://wa.me/"+WA+(text?("?text="+text):""); }
+  function sendWA(e){
+    e.preventDefault();
+    var n=document.getElementById("f-name").value.trim();
+    var p=document.getElementById("f-phone").value.trim();
+    var o=document.getElementById("f-office").value.trim();
+    var msg="مرحباً، أرغب بتجربة منصة الاستقدام الذكي.%0aالاسم: "+n+"%0aالجوال: "+p+"%0aالمكتب: "+o;
+    window.open(waLink(msg), "_blank");
+    return false;
+  }
+  // جلب بيانات الشركة (تظهر عند تشغيلها عبر الخادم)
+  fetch("/api/public/company").then(r=>r.ok?r.json():null).then(c=>{
+    if(!c) return;
+    if(c.whatsapp){ WA=c.whatsapp.replace(/[^0-9]/g,""); document.querySelector(".wa").setAttribute("href", waLink("")); }
+    var fc=document.getElementById("footContact"), any=false;
+    if(c.email){ var e=document.getElementById("fcEmail"); e.textContent="✉ "+c.email; e.href="mailto:"+c.email; any=true; }
+    if(c.phone){ var ph=document.getElementById("fcPhone"); ph.textContent="✆ "+c.phone; ph.href="tel:"+c.phone; any=true; }
+    if(c.cr){ document.getElementById("fcCr").textContent="سجل تجاري: "+c.cr; any=true; }
+    if(any) fc.style.display="block";
+  }).catch(()=>{});
+  // جلب المقالات المنشورة
+  fetch("/api/public/articles").then(r=>r.ok?r.json():null).then(list=>{
+    if(!list || !list.length) return;
+    document.getElementById("articles").style.display="block";
+    document.getElementById("articlesGrid").innerHTML = list.slice(0,6).map(function(a){
+      return '<a class="pcard fcard" style="text-decoration:none;display:block" href="article.html?id='+a.id+'">'
+        +'<h3>'+a.title+'</h3><p>'+(a.excerpt||"")+'</p>'
+        +'<span style="color:#0C4A45;font-weight:700;font-size:13px">اقرأ المزيد ←</span></a>';
+    }).join("");
+  }).catch(()=>{});
+</script>
+</body>
+</html>

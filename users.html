@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إدارة مستخدمي المكتب</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--primary:#0C4A45;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--gold:#B5862A;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 16px;}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .logo{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px;}
+  h2{font-size:15px;margin:0 0 14px;} .muted{color:var(--sub);font-size:13px;}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 5px;}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#FBFAF6;font-size:14px;outline:none;}
+  input:focus,select:focus{border-color:var(--primary);}
+  button{padding:11px 16px;border:none;border-radius:11px;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;}
+  button.ghost{background:transparent;color:var(--primary);border:1px solid var(--line);}
+  button:active{transform:scale(.98);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}.row>*{flex:1;min-width:140px;}
+  .err{background:#FEF2F2;color:#B91C1C;padding:9px 12px;border-radius:11px;font-size:13px;margin:8px 0;display:none;}
+  .ok{background:#ECFDF5;color:#047857;padding:9px 12px;border-radius:11px;font-size:13px;margin:8px 0;display:none;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th,td{text-align:right;padding:10px 8px;border-bottom:1px solid var(--line);}
+  th{color:var(--sub);font-weight:600;font-size:12px;}
+  .pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .on{background:#ECFDF5;color:#047857;}.off{background:#FEF2F2;color:#B91C1C;}
+  .role-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#FBFAF6;}
+  .role-card b{color:var(--primary);} .perm{display:inline-block;background:#E3EEEC;color:var(--primary);border-radius:8px;padding:2px 8px;font-size:11px;margin:3px 3px 0 0;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;}
+  #app{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div>
+    <div><div style="font-weight:700">إدارة مستخدمي المكتب</div><div class="muted">للمشرف فقط — كل مكتب يدير مستخدميه</div></div>
+  </div>
+
+  <div class="card" id="loginCard">
+    <h2>تسجيل الدخول</h2>
+    <div class="err" id="loginErr"></div>
+    <label>اسم المستخدم</label><input id="u" value="supervisor" />
+    <label>كلمة المرور</label><input id="p" type="password" value="sup123" />
+    <div style="margin-top:14px"><button onclick="doLogin()">دخول</button></div>
+    <p class="muted" style="margin-top:10px">تجريبي: supervisor / sup123</p>
+  </div>
+
+  <div id="app">
+    <div class="card">
+      <div class="topbar"><h2 style="margin:0">مستخدمو مكتبك</h2><button class="ghost" onclick="logout()">خروج</button></div>
+      <div id="usersBox" class="muted" style="margin-top:12px">…</div>
+    </div>
+
+    <div class="card">
+      <h2>إضافة مستخدم داخلي</h2>
+      <div class="err" id="cErr"></div><div class="ok" id="cOk"></div>
+      <div class="row">
+        <div><label>الاسم</label><input id="nName" placeholder="الاسم الكامل" /></div>
+        <div><label>اسم المستخدم</label><input id="nUser" placeholder="username" /></div>
+      </div>
+      <div class="row">
+        <div><label>كلمة المرور</label><input id="nPass" type="password" /></div>
+        <div><label>الدور</label><select id="nRole"></select></div>
+      </div>
+      <div style="margin-top:14px"><button onclick="createUser()">إنشاء المستخدم</button></div>
+    </div>
+
+    <div class="card">
+      <h2>الأدوار وصلاحياتها</h2>
+      <div id="rolesBox" class="row" style="gap:12px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+let token = sessionStorage.getItem("rms_users_token") || null;
+let ROLES = [];
+const PERM_LABELS = {
+  "orders.view":"عرض الطلبات","orders.create":"إنشاء طلب","orders.edit":"تعديل الطلب","orders.advance":"نقل المراحل",
+  "documents.manage":"إدارة المستندات","finance.view":"عرض المالية","finance.edit":"تعديل المالية",
+  "dashboard.view":"لوحة التحكم","users.manage":"إدارة المستخدمين",
+};
+const $ = (id) => document.getElementById(id);
+const show=(el,m)=>{el.textContent=m;el.style.display="block";}; const hide=(el)=>el.style.display="none";
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, { ...opts, headers: { "Content-Type":"application/json", Authorization:"Bearer "+token, ...(opts.headers||{}) } });
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(data.error || "خطأ");
+  return data;
+}
+
+async function doLogin() {
+  hide($("loginErr"));
+  try {
+    const res = await fetch(API + "/api/auth/login", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ username:$("u").value, password:$("p").value }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    if (!data.user.permissions.includes("users.manage")) throw new Error("لا تملك صلاحية إدارة المستخدمين (للمشرف فقط).");
+    token = data.token; sessionStorage.setItem("rms_users_token", token);
+    enterApp();
+  } catch (e) { show($("loginErr"), e.message); }
+}
+function logout(){ token=null; sessionStorage.removeItem("rms_users_token"); $("app").style.display="none"; $("loginCard").style.display="block"; }
+async function enterApp(){ $("loginCard").style.display="none"; $("app").style.display="block"; await loadRoles(); loadUsers(); }
+
+async function loadRoles() {
+  ROLES = await api("/api/users/roles");
+  $("nRole").innerHTML = ROLES.map((r)=>`<option value="${r.role}">${r.label}</option>`).join("");
+  $("rolesBox").innerHTML = ROLES.map((r)=>`<div class="role-card" style="flex:1;min-width:190px">
+    <b>${r.label}</b><div style="margin-top:6px">${r.permissions.map((p)=>`<span class="perm">${PERM_LABELS[p]||p}</span>`).join("")}</div></div>`).join("");
+}
+
+async function loadUsers() {
+  try {
+    const users = await api("/api/users");
+    $("usersBox").innerHTML = `<table><tr><th>الاسم</th><th>المستخدم</th><th>الدور</th><th>الحالة</th><th></th></tr>` +
+      users.map((u)=>{
+        const label = (ROLES.find((r)=>r.role===u.role)||{}).label || u.role;
+        return `<tr><td>${u.name||"—"}</td><td>${u.username}</td>
+          <td>${label}</td>
+          <td><span class="pill ${u.active?"on":"off"}">${u.active?"نشط":"موقوف"}</span></td>
+          <td><button class="ghost" style="padding:5px 10px" onclick="toggleUser(${u.id},${!u.active})">${u.active?"إيقاف":"تفعيل"}</button></td></tr>`;
+      }).join("") + `</table>`;
+  } catch (e) { $("usersBox").textContent = e.message; }
+}
+
+async function toggleUser(id, active) {
+  try { await api(`/api/users/${id}`, { method:"PATCH", body: JSON.stringify({ active }) }); loadUsers(); }
+  catch (e) { alert(e.message); }
+}
+
+async function createUser() {
+  hide($("cErr")); hide($("cOk"));
+  try {
+    const u = await api("/api/users", { method:"POST", body: JSON.stringify({ name:$("nName").value, username:$("nUser").value, password:$("nPass").value, role:$("nRole").value }) });
+    show($("cOk"), `تم إنشاء «${u.username}».`);
+    $("nName").value=$("nUser").value=$("nPass").value="";
+    loadUsers();
+  } catch (e) { show($("cErr"), e.message); }
+}
+
+if (token) enterApp();
+</script>
+</body>
+</html>

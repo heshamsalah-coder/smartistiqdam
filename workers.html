@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إدارة العمالة المتوفرة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--primary:#0C4A45;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--gold:#B5862A;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 16px;}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .logo{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px;}
+  h2{font-size:15px;margin:0 0 14px;} .muted{color:var(--sub);font-size:13px;}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 5px;}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#FBFAF6;font-size:14px;outline:none;}
+  input:focus,select:focus{border-color:var(--primary);}
+  button{padding:11px 16px;border:none;border-radius:11px;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;}
+  button.ghost{background:transparent;color:var(--primary);border:1px solid var(--line);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}.row>*{flex:1;min-width:150px;}
+  .err{background:#FEF2F2;color:#B91C1C;padding:9px 12px;border-radius:11px;font-size:13px;margin:8px 0;display:none;}
+  .ok{background:#ECFDF5;color:#047857;padding:9px 12px;border-radius:11px;font-size:13px;margin:8px 0;display:none;}
+  .link-box{display:flex;gap:8px;align-items:center;background:#E3EEEC;border-radius:12px;padding:10px 14px;}
+  .link-box code{flex:1;font-size:12px;color:var(--primary);word-break:break-all;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+  .wcard{border:1px solid var(--line);border-radius:14px;padding:14px;background:#FBFAF6;}
+  .avatar{width:54px;height:54px;border-radius:50%;background:#0C4A45;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;object-fit:cover;}
+  .pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .available{background:#ECFDF5;color:#047857;}.reserved{background:#FEF3C7;color:#92400E;}.hired{background:#EEF2FF;color:#3730A3;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;}
+  #app{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div><div><div style="font-weight:700">إدارة العمالة المتوفرة</div><div class="muted">قاعدة بيانات العمالة وبوابة الكتالوج للعميل</div></div></div>
+
+  <div class="card" id="loginCard">
+    <h2>تسجيل الدخول</h2>
+    <div class="err" id="loginErr"></div>
+    <label>اسم المستخدم</label><input id="u" value="supervisor" />
+    <label>كلمة المرور</label><input id="p" type="password" value="sup123" />
+    <div style="margin-top:14px"><button onclick="doLogin()">دخول</button></div>
+    <p class="muted" style="margin-top:10px">تجريبي: supervisor / sup123 — أو reception / rec123</p>
+  </div>
+
+  <div id="app">
+    <div class="card">
+      <div class="topbar"><h2 style="margin:0">رابط كتالوج العميل</h2><button class="ghost" onclick="logout()">خروج</button></div>
+      <p class="muted">أرسل هذا الرابط للعميل ليتصفّح الجنسيات والعمالة المتوفرة فقط — دون الوصول لأي بيانات أخرى.</p>
+      <div class="link-box"><code id="catalogLink">…</code><button class="ghost" style="padding:6px 12px" onclick="copyLink()">نسخ</button></div>
+    </div>
+
+    <div class="card">
+      <h2>إضافة عاملة</h2>
+      <div class="err" id="cErr"></div><div class="ok" id="cOk"></div>
+      <div class="row">
+        <div><label>الاسم</label><input id="wName" placeholder="الاسم" /></div>
+        <div><label>السن</label><input id="wAge" type="number" placeholder="مثال: 30" /></div>
+        <div><label>الجنسية</label><input id="wNat" placeholder="مثال: الفلبين" /></div>
+      </div>
+      <div class="row">
+        <div><label>المهنة</label><input id="wProf" placeholder="عاملة منزلية / سائق" /></div>
+        <div><label>رقم الجوال (إن وجد)</label><input id="wPhone" placeholder="اختياري" /></div>
+        <div><label>رقم الجواز</label><input id="wPass" /></div>
+      </div>
+      <div class="row">
+        <div><label>الصورة الشخصية</label><input id="wPhoto" type="file" accept="image/*" /></div>
+        <div><label>السيرة الذاتية (Bio-data)</label><input id="wCv" type="file" accept=".pdf,.doc,.docx,image/*" /></div>
+        <div><label>الحالة</label><select id="wStatus"><option value="available">متوفرة</option><option value="reserved">محجوزة</option><option value="hired">تم التعاقد</option></select></div>
+      </div>
+      <div style="margin-top:14px"><button onclick="createWorker()">إضافة</button></div>
+    </div>
+
+    <div class="card">
+      <h2>طلبات الحجز الواردة من العملاء</h2>
+      <div id="reservations" class="muted">…</div>
+    </div>
+
+    <div class="card">
+      <h2>العمالة المسجّلة</h2>
+      <div id="grid" class="grid"><span class="muted">…</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+let token = sessionStorage.getItem("rms_workers_token") || null;
+const $ = (id) => document.getElementById(id);
+const show=(el,m)=>{el.textContent=m;el.style.display="block";}; const hide=(el)=>el.style.display="none";
+const SLABEL = { available:"متوفرة", reserved:"محجوزة", hired:"تم التعاقد" };
+
+async function apiJSON(path){ const r=await fetch(API+path,{headers:{Authorization:"Bearer "+token}}); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||"خطأ"); return d; }
+
+async function doLogin(){
+  hide($("loginErr"));
+  try{
+    const res=await fetch(API+"/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:$("u").value,password:$("p").value})});
+    const data=await res.json(); if(!res.ok) throw new Error(data.error);
+    if(!data.user.permissions.includes("workers.view")) throw new Error("لا تملك صلاحية إدارة العمالة.");
+    token=data.token; sessionStorage.setItem("rms_workers_token",token); enterApp();
+  }catch(e){ show($("loginErr"),e.message); }
+}
+function logout(){ token=null; sessionStorage.removeItem("rms_workers_token"); $("app").style.display="none"; $("loginCard").style.display="block"; }
+async function enterApp(){ $("loginCard").style.display="none"; $("app").style.display="block"; loadLink(); loadReservations(); loadWorkers(); }
+
+async function loadReservations(){
+  try{
+    const list = await apiJSON("/api/workers/reservations");
+    if(!list.length){ $("reservations").innerHTML='<span class="muted">لا توجد طلبات حجز بعد.</span>'; return; }
+    $("reservations").innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:13px">'+
+      '<tr><th style="text-align:right;color:#5C6A66;padding:6px 4px">العاملة</th><th style="text-align:right;color:#5C6A66;padding:6px 4px">المهنة/الجنسية</th><th style="text-align:right;color:#5C6A66;padding:6px 4px">جوال العميل</th><th style="text-align:right;color:#5C6A66;padding:6px 4px">التاريخ</th></tr>'+
+      list.map((r)=>`<tr style="border-top:1px solid #E5E1D6">
+        <td style="padding:8px 4px;font-weight:600">${r.worker.name||"—"}</td>
+        <td style="padding:8px 4px;color:#5C6A66">${r.worker.profession||""} · ${r.worker.nationality||""}</td>
+        <td style="padding:8px 4px;font-weight:700;color:#0C4A45" dir="ltr">${r.clientPhone}</td>
+        <td style="padding:8px 4px;color:#5C6A66">${r.at}</td></tr>`).join("")+'</table>';
+  }catch(e){ $("reservations").textContent=e.message; }
+}
+
+async function loadLink(){
+  try{ const d=await apiJSON("/api/workers/catalog-link"); $("catalogLink").textContent = API + d.path; }
+  catch(e){ $("catalogLink").textContent = e.message; }
+}
+function copyLink(){ navigator.clipboard?.writeText($("catalogLink").textContent); }
+
+async function loadWorkers(){
+  try{
+    const list=await apiJSON("/api/workers");
+    if(!list.length){ $("grid").innerHTML='<span class="muted">لا توجد عمالة مسجّلة بعد.</span>'; return; }
+    $("grid").innerHTML = list.map((w)=>{
+      const photo = w.hasPhoto ? `<img class="avatar" src="${API}/api/workers/${w.id}/photo?t=${token.slice(-6)}" onerror="this.replaceWith(document.createTextNode(''))"/>` : `<div class="avatar">${(w.name||"؟").slice(0,1)}</div>`;
+      return `<div class="wcard">
+        <div style="display:flex;gap:10px;align-items:center">${photo}
+          <div><div style="font-weight:700">${w.name||"—"}</div><div class="muted">${w.profession||""} · ${w.nationality||""}</div></div></div>
+        <div class="muted" style="margin-top:8px">السن: ${w.age||"—"} · الجواز: ${w.passportNo||"—"}</div>
+        <div class="muted">الجوال: ${w.phone||"—"} · السيرة: ${w.hasCv?"مرفقة":"—"}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+          <span class="pill ${w.status}">${SLABEL[w.status]}</span>
+          <select onchange="setStatus(${w.id},this.value)" style="width:auto;padding:5px 8px;font-size:12px">
+            ${["available","reserved","hired"].map((s)=>`<option value="${s}" ${s===w.status?"selected":""}>${SLABEL[s]}</option>`).join("")}
+          </select>
+        </div></div>`;
+    }).join("");
+  }catch(e){ $("grid").textContent=e.message; }
+}
+
+async function setStatus(id,status){
+  const fd=new FormData(); fd.append("status",status);
+  await fetch(`${API}/api/workers/${id}`,{method:"PATCH",headers:{Authorization:"Bearer "+token},body:fd});
+  loadWorkers();
+}
+
+async function createWorker(){
+  hide($("cErr")); hide($("cOk"));
+  try{
+    const fd=new FormData();
+    fd.append("name",$("wName").value); fd.append("age",$("wAge").value); fd.append("nationality",$("wNat").value);
+    fd.append("profession",$("wProf").value); fd.append("phone",$("wPhone").value); fd.append("passportNo",$("wPass").value);
+    fd.append("status",$("wStatus").value);
+    if($("wPhoto").files[0]) fd.append("photo",$("wPhoto").files[0]);
+    if($("wCv").files[0]) fd.append("cv",$("wCv").files[0]);
+    const res=await fetch(`${API}/api/workers`,{method:"POST",headers:{Authorization:"Bearer "+token},body:fd});
+    const d=await res.json(); if(!res.ok) throw new Error(d.error||"خطأ");
+    show($("cOk"),`تمت إضافة «${d.name||"عاملة"}».`);
+    ["wName","wAge","wNat","wProf","wPhone","wPass"].forEach((i)=>$(i).value=""); $("wPhoto").value=""; $("wCv").value="";
+    loadWorkers();
+  }catch(e){ show($("cErr"),e.message); }
+}
+
+if(token) enterApp();
+</script>
+</body>
+</html>

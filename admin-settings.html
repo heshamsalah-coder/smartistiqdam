@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الإعدادات — لوحة مدير المنصة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--teal:#0C4A45;--gold:#B5862A;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--red:#B23B3B;--green:#1F7A4D;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);}
+  .wrap{max-width:1040px;margin:0 auto;padding:22px 16px 60px;}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:18px;}
+  .brand .logo{width:42px;height:42px;border-radius:12px;background:var(--teal);display:flex;align-items:center;justify-content:center;}
+  .brand .nm{font-weight:700;}
+  .muted{color:var(--sub);font-size:13px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;}
+  h2{font-size:17px;color:var(--teal);margin-bottom:4px;}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:14px;}
+  label{display:block;font-size:13px;color:var(--sub);margin:8px 0 4px;font-weight:600;}
+  input,select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#FAFAF7;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  @media(max-width:680px){.grid2,.grid3{grid-template-columns:1fr;}}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;padding:10px 16px;font-size:14px;}
+  .btn{background:var(--teal);color:#fff;}
+  .gold{background:var(--gold);color:#fff;}
+  .ghost{background:#fff;color:var(--teal);border:1px solid var(--line);}
+  .ok{color:var(--green);font-size:13px;}
+  .err{color:var(--red);font-size:13px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px;}
+  th,td{border-bottom:1px solid var(--line);padding:9px 6px;text-align:right;}
+  th{color:var(--sub);font-weight:600;}
+  .pill{border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;}
+  .on{background:#E3F2E8;color:var(--green);}
+  .off{background:#F6E2E2;color:var(--red);}
+  .nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .nav a{border-radius:10px;padding:9px 16px;font-weight:700;font-size:14px;text-decoration:none;background:#fff;color:var(--teal);border:1px solid var(--teal);}
+  .nav a.active{background:var(--teal);color:#fff;}
+  .hidden{display:none;}
+  .badge{display:inline-block;background:#EFEBE0;color:#7A5B16;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div>
+    <div><div class="nm">لوحة مدير المنصة</div><div class="muted">الإعدادات</div></div>
+  </div>
+
+  <div class="card hidden" id="loginCard">
+    <h2>تسجيل الدخول</h2>
+    <div class="err" id="loginErr"></div>
+    <label>اسم المستخدم</label><input id="u" value="super" />
+    <label>كلمة المرور</label><input id="p" type="password" value="super123" />
+    <div style="margin-top:12px"><button class="btn" onclick="doLogin()">دخول</button></div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="nav">
+      <a href="admin.html">المكاتب</a>
+      <a href="admin-articles.html">المقالات</a>
+      <a class="active" href="admin-settings.html">الإعدادات</a>
+    </div>
+
+    <!-- A) بوابة الدفع -->
+    <div class="card">
+      <h2>بوابة الدفع (Tap)</h2>
+      <div class="sub">أدخل المفتاح السري الخاص بحسابك في Tap لتفعيل الدفع وروابط السداد. يُخزَّن بأمان على الخادم ولا يُعرض كاملاً.</div>
+      <div id="tapState" class="muted" style="margin-bottom:6px"></div>
+      <label>Tap Secret Key (sk_test_... أو sk_live_...)</label>
+      <input id="tapKey" type="password" placeholder="sk_..." autocomplete="off" />
+      <label>رابط الموقع العام (APP_URL) لروابط العودة من الدفع</label>
+      <input id="appUrl" placeholder="https://smartistiqdam.com" />
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+        <button class="btn" onclick="saveTap()">حفظ المفتاح</button>
+        <button class="ghost" onclick="saveAppUrl()">حفظ الرابط</button>
+        <span id="tapMsg" class="ok"></span>
+      </div>
+    </div>
+
+    <!-- B) بيانات الشركة -->
+    <div class="card">
+      <h2>بيانات الشركة</h2>
+      <div class="sub">تظهر هذه البيانات على صفحة الهبوط (تواصل وتذييل) وفي الفواتير الضريبية.</div>
+      <div class="err" id="cErr"></div>
+      <label>اسم الشركة / المؤسسة</label><input id="companyName" />
+      <div class="grid2">
+        <div><label>البريد الإلكتروني</label><input id="companyEmail" placeholder="info@example.com" /></div>
+        <div><label>جوال الواتساب (مع رمز الدولة)</label><input id="companyWhatsapp" placeholder="9665xxxxxxxx" /></div>
+      </div>
+      <div class="grid2">
+        <div><label>جوال التواصل</label><input id="companyPhone" placeholder="05xxxxxxxx" /></div>
+        <div><label>السجل التجاري</label><input id="companyCr" placeholder="10xxxxxxxx" /></div>
+      </div>
+      <div class="grid2">
+        <div><label>الرقم الضريبي (اختياري)</label><input id="companyVat" placeholder="3xxxxxxxxxxxxx3" /></div>
+        <div><label>العنوان (اختياري)</label><input id="companyAddress" placeholder="المدينة، الحي" /></div>
+      </div>
+      <div style="margin-top:12px"><button class="btn" onclick="saveCompany()">حفظ بيانات الشركة</button> <span id="cMsg" class="ok"></span></div>
+    </div>
+
+    <!-- C) إعدادات الاشتراك -->
+    <div class="card">
+      <h2>إعدادات الاشتراك</h2>
+      <div class="sub">مدة الفترة التجريبية وأسعار الخطط (قبل الضريبة).</div>
+      <div style="max-width:220px"><label>مدة الفترة التجريبية (أيام)</label><input id="trialDays" type="number" min="1" /></div>
+      <div class="grid3" id="planInputs" style="margin-top:10px"></div>
+      <div style="margin-top:12px"><button class="btn" onclick="savePlans()">حفظ إعدادات الاشتراك</button> <span id="pMsg" class="ok"></span></div>
+    </div>
+
+    <!-- D) العملاء والفواتير -->
+    <div class="card">
+      <h2>العملاء والفواتير</h2>
+      <div class="sub">قائمة المكاتب المشتركة وحالة اشتراكها، مع إصدار فاتورة ضريبية وعرض الفواتير السابقة.</div>
+      <div id="clients" class="muted">…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API=location.origin;
+let token=sessionStorage.getItem("rms_admin_token")||null;
+let PLANS=[];
+const $=(id)=>document.getElementById(id);
+async function api(path,opts={}){
+  const r=await fetch(API+path,{...opts,headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,...(opts.headers||{})}});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw Object.assign(new Error(d.error||"خطأ"),{status:r.status,data:d});
+  return d;
+}
+async function doLogin(){$("loginErr").textContent="";try{const d=await api("/api/auth/login",{method:"POST",body:JSON.stringify({username:$("u").value,password:$("p").value})});token=d.token;sessionStorage.setItem("rms_admin_token",token);enter();}catch(e){$("loginErr").textContent=e.message;}}
+function enter(){$("loginCard").classList.add("hidden");$("app").classList.remove("hidden");loadSettings();loadClients();}
+
+async function loadSettings(){
+  const s=await api("/api/admin/settings");
+  $("tapState").innerHTML = s.tapKeySet ? `الحالة: <b style="color:#1F7A4D">مفعّل</b> (${s.tapKeyMasked})` : `الحالة: <b style="color:#B23B3B">غير مهيأ</b>`;
+  $("appUrl").value=s.appUrl||"";
+  const c=s.company||{};
+  $("companyName").value=c.name||"";$("companyEmail").value=c.email||"";$("companyWhatsapp").value=c.whatsapp||"";
+  $("companyPhone").value=c.phone||"";$("companyCr").value=c.cr||"";$("companyVat").value=c.vatNo||"";$("companyAddress").value=c.address||"";
+  $("trialDays").value=s.trialDays||14;
+  PLANS=s.plans||[];
+  $("planInputs").innerHTML=PLANS.map(p=>`<div><label>${p.name} (ر.س)</label><input id="price-${p.code}" type="number" min="0" value="${p.price}" /></div>`).join("");
+}
+async function saveTap(){
+  const key=$("tapKey").value.trim(); if(!key){$("tapMsg").textContent="";$("tapMsg").className="err";$("tapMsg").textContent="أدخل المفتاح";return;}
+  try{const d=await api("/api/admin/settings/tap-key",{method:"POST",body:JSON.stringify({key})});$("tapKey").value="";$("tapMsg").className="ok";$("tapMsg").textContent="تم الحفظ ✓";loadSettings();}catch(e){$("tapMsg").className="err";$("tapMsg").textContent=e.message;}
+}
+async function saveAppUrl(){try{await api("/api/admin/settings",{method:"POST",body:JSON.stringify({appUrl:$("appUrl").value.trim()})});$("tapMsg").className="ok";$("tapMsg").textContent="تم حفظ الرابط ✓";}catch(e){$("tapMsg").className="err";$("tapMsg").textContent=e.message;}}
+async function saveCompany(){
+  const body={companyName:$("companyName").value,companyEmail:$("companyEmail").value,companyWhatsapp:$("companyWhatsapp").value,companyPhone:$("companyPhone").value,companyCr:$("companyCr").value,companyVat:$("companyVat").value,companyAddress:$("companyAddress").value};
+  try{await api("/api/admin/settings",{method:"POST",body:JSON.stringify(body)});$("cMsg").textContent="تم الحفظ ✓";}catch(e){$("cErr").textContent=e.message;}
+}
+async function savePlans(){
+  try{
+    await api("/api/admin/settings",{method:"POST",body:JSON.stringify({trialDays:$("trialDays").value})});
+    for(const p of PLANS){const v=$("price-"+p.code).value;await api("/api/admin/plans/"+p.code,{method:"PATCH",body:JSON.stringify({price:v})});}
+    $("pMsg").textContent="تم الحفظ ✓";loadSettings();
+  }catch(e){$("pMsg").className="err";$("pMsg").textContent=e.message;}
+}
+
+const PN={monthly:"شهري",yearly:"سنوي",lifetime:"مدى الحياة",trial:"تجريبي"};
+const ST={trialing:"تجريبي",active:"فعّال",trial_expired:"منتهٍ",expired:"منتهٍ",none:"بلا اشتراك"};
+async function loadClients(){
+  const cl=await api("/api/admin/clients");
+  $("clients").innerHTML=`<table><thead><tr><th>المكتب</th><th>الاشتراك</th><th>الخطة</th><th>ينتهي</th><th>المدفوع</th><th>الفواتير</th><th>إصدار فاتورة</th></tr></thead><tbody>`+
+    cl.map(o=>{
+      const s=o.subscription, act=s.status==="trialing"||s.status==="active";
+      const invs=(o.invoices||[]).map(iv=>`<a href="invoice.html?id=${iv.id}" target="_blank" style="color:#0C4A45;text-decoration:underline;font-size:12px">${iv.number}</a>`).join("، ")||'<span class="muted">—</span>';
+      const opts=PLANS.map(p=>`<option value="${p.code}">${p.name}</option>`).join("");
+      return `<tr>
+        <td style="font-weight:600">${o.name}</td>
+        <td><span class="pill ${act?'on':'off'}">${ST[s.status]||'—'}</span></td>
+        <td>${PN[s.planCode]||'—'}</td>
+        <td class="muted">${s.endAt||(s.status==='active'?'دائم':'—')}</td>
+        <td>${o.paidTotal} ر.س</td>
+        <td>${invs}</td>
+        <td style="white-space:nowrap"><select id="iv-${o.id}" style="width:auto;padding:5px">${opts}</select>
+          <button class="gold" style="padding:6px 10px;font-size:12px" onclick="issue(${o.id})">إصدار</button></td>
+      </tr>`;
+    }).join("")+`</tbody></table>`;
+}
+async function issue(id){
+  const code=$("iv-"+id).value;
+  try{const d=await api("/api/admin/offices/"+id+"/invoice",{method:"POST",body:JSON.stringify({planCode:code})});
+    loadClients(); window.open("invoice.html?id="+d.invoice.id,"_blank");
+  }catch(e){alert(e.message);}
+}
+(function(){ if(token) enter(); else $("loginCard").classList.remove("hidden"); })();
+</script>
+</body>
+</html>

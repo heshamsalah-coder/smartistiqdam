@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إشعارات حجز السير الذاتية</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--primary:#0C4A45;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--gold:#B5862A;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px;}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .logo{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px;}
+  h2{font-size:15px;margin:0;} .muted{color:var(--sub);font-size:13px;}
+  input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#FBFAF6;font-size:14px;outline:none;}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 5px;}
+  button{padding:10px 14px;border:none;border-radius:11px;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;}
+  button.ghost{background:transparent;color:var(--primary);border:1px solid var(--line);}
+  button.soft{background:#E3EEEC;color:var(--primary);}
+  button.danger{background:#FEF2F2;color:#B91C1C;}
+  .err{background:#FEF2F2;color:#B91C1C;padding:9px 12px;border-radius:11px;font-size:13px;margin:8px 0;display:none;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;}
+  .badge{background:#B5862A;color:#fff;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;margin-right:8px;}
+  .note{display:flex;gap:14px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .note.new{border-right:4px solid var(--gold);background:#FFFDF6;}
+  .ic{width:42px;height:42px;border-radius:50%;background:#E3EEEC;color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .grow{flex:1;min-width:0;}
+  .pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .pending{background:#FEF3C7;color:#92400E;}.contacted{background:#EEF2FF;color:#3730A3;}.confirmed{background:#ECFDF5;color:#047857;}.cancelled{background:#FEF2F2;color:#B91C1C;}
+  .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  #app{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div><div><div style="font-weight:700">إشعارات حجز السير الذاتية</div><div class="muted">طلبات الحجز الواردة من العملاء عبر الكتالوج</div></div></div>
+
+  <div class="card" id="loginCard">
+    <h2>تسجيل الدخول</h2>
+    <div class="err" id="loginErr"></div>
+    <label>اسم المستخدم</label><input id="u" value="supervisor" />
+    <label>كلمة المرور</label><input id="p" type="password" value="sup123" />
+    <div style="margin-top:14px"><button onclick="doLogin()">دخول</button></div>
+    <p class="muted" style="margin-top:10px">تجريبي: supervisor / sup123 — أو reception / rec123</p>
+  </div>
+
+  <div id="app">
+    <div class="card">
+      <div class="topbar">
+        <h2>طلبات الحجز <span id="newBadge"></span></h2>
+        <div><button class="ghost" onclick="loadList()">تحديث</button> <button class="ghost" onclick="logout()">خروج</button></div>
+      </div>
+      <div id="list" class="muted" style="margin-top:14px">…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+let token = sessionStorage.getItem("rms_notif_token") || null;
+let canManage = false;
+const $ = (id) => document.getElementById(id);
+const show=(el,m)=>{el.textContent=m;el.style.display="block";}; const hide=(el)=>el.style.display="none";
+const SLABEL = { pending:"جديد", contacted:"تم التواصل", confirmed:"مؤكّد", cancelled:"ملغي" };
+
+async function api(path, opts={}) {
+  const r = await fetch(API+path, { ...opts, headers:{ "Content-Type":"application/json", Authorization:"Bearer "+token, ...(opts.headers||{}) } });
+  const d = await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||"خطأ"); return d;
+}
+
+async function doLogin(){
+  hide($("loginErr"));
+  try{
+    const res=await fetch(API+"/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:$("u").value,password:$("p").value})});
+    const data=await res.json(); if(!res.ok) throw new Error(data.error);
+    if(!data.user.permissions.includes("workers.view")) throw new Error("لا تملك صلاحية عرض طلبات الحجز.");
+    canManage = data.user.permissions.includes("workers.manage");
+    token=data.token; sessionStorage.setItem("rms_notif_token",token); enterApp();
+  }catch(e){ show($("loginErr"),e.message); }
+}
+function logout(){ token=null; sessionStorage.removeItem("rms_notif_token"); $("app").style.display="none"; $("loginCard").style.display="block"; }
+function enterApp(){ $("loginCard").style.display="none"; $("app").style.display="block"; loadList(); }
+
+async function loadList(){
+  try{
+    const list = await api("/api/workers/reservations");
+    const pending = list.filter((r)=>r.status==="pending").length;
+    $("newBadge").innerHTML = pending ? `<span class="badge">${pending} جديد</span>` : "";
+    if(!list.length){ $("list").innerHTML='<span class="muted">لا توجد طلبات حجز بعد.</span>'; return; }
+    $("list").innerHTML = list.map((r)=>{
+      const acts = canManage ? `<div class="actions">
+        ${r.status!=="contacted"?`<button class="soft" onclick="setStatus(${r.id},'contacted')">تم التواصل</button>`:""}
+        ${r.status!=="confirmed"?`<button class="soft" onclick="setStatus(${r.id},'confirmed')">تأكيد الحجز</button>`:""}
+        ${r.status!=="cancelled"?`<button class="danger" onclick="setStatus(${r.id},'cancelled')">إلغاء</button>`:""}
+      </div>` : "";
+      return `<div class="note ${r.status==="pending"?"new":""}">
+        <div class="ic">🔔</div>
+        <div class="grow">
+          <div style="font-weight:700">طلب حجز: ${r.worker.name||"عاملة"} <span class="muted" style="font-weight:400">(${r.worker.profession||""} · ${r.worker.nationality||""})</span></div>
+          <div class="muted">جوال العميل: <b dir="ltr" style="color:var(--primary)">${r.clientPhone}</b> · بتاريخ ${r.at}</div>
+          ${acts}
+        </div>
+        <span class="pill ${r.status}">${SLABEL[r.status]}</span>
+      </div>`;
+    }).join("");
+  }catch(e){ $("list").textContent=e.message; }
+}
+
+async function setStatus(id,status){
+  try{ await api(`/api/workers/reservations/${id}`,{method:"PATCH",body:JSON.stringify({status})}); loadList(); }
+  catch(e){ alert(e.message); }
+}
+
+if(token) enterApp();
+</script>
+</body>
+</html>

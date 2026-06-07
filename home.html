@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الاستقدام الذكي — البوابة الرئيسية</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--teal:#0C4A45;--teal2:#0F5A53;--gold:#B5862A;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  .hero{background:linear-gradient(135deg,#0C4A45,#11635B);color:#fff;padding:54px 20px 48px;text-align:center;}
+  .hero svg{width:74px;height:74px;}
+  .en{letter-spacing:.34em;font-size:13px;color:#D8B25A;font-weight:700;margin-top:10px;}
+  .hero h1{font-size:32px;margin:6px 0 8px;}
+  .hero p{color:#CFE0DC;font-size:15px;margin:0 auto;max-width:540px;line-height:1.8;}
+  .wrap{max-width:1000px;margin:-26px auto 0;padding:0 16px 60px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;}
+  .sec-title{font-size:15px;color:var(--teal);font-weight:700;margin:30px 4px 12px;display:flex;align-items:center;gap:8px;}
+  a.tile{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;transition:transform .15s,box-shadow .15s;}
+  a.tile:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.10);}
+  .tile .ic{width:46px;height:46px;border-radius:13px;background:#E3EEEC;color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
+  .tile .t{font-weight:700;font-size:15.5px;color:var(--ink);}
+  .tile .d{color:var(--sub);font-size:13px;margin-top:5px;line-height:1.6;}
+  .foot{text-align:center;color:var(--sub);font-size:12px;padding:8px 16px 0;}
+</style>
+</head>
+<body>
+<div class="hero">
+  <svg viewBox="0 0 64 64" fill="none"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M24 56 V40 a8 8 0 0 1 16 0 V56" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".4"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg>
+  <div class="en">SMART ISTIQDAM</div>
+  <h1>الاستقدام الذكي</h1>
+  <p>منصة إدارة مكاتب الاستقدام: دورة الطلب، العمالة المتوفرة، الكتالوج والحجز، والاشتراكات — في مكان واحد.</p>
+</div>
+
+<div class="wrap">
+  <div class="sec-title">🛠️ إدارة المكتب والمنصة</div>
+  <div class="grid">
+    <a class="tile" href="admin.html"><div class="ic">🏢</div><div class="t">لوحة مدير المنصة</div><div class="d">إدارة المكاتب، الاشتراكات، وروابط الكتالوج.</div></a>
+    <a class="tile" href="workers.html"><div class="ic">🧑‍🍳</div><div class="t">إدارة العمالة المتوفرة</div><div class="d">قاعدة العمالة ورابط كتالوج المكتب.</div></a>
+    <a class="tile" href="users.html"><div class="ic">👥</div><div class="t">مستخدمو المكتب</div><div class="d">الموظفون والأدوار والصلاحيات.</div></a>
+    <a class="tile" href="notifications.html"><div class="ic">🔔</div><div class="t">إشعارات حجز السير</div><div class="d">طلبات الحجز الواردة من العملاء.</div></a>
+    <a class="tile" href="subscription.html"><div class="ic">💳</div><div class="t">الاشتراك والدفع</div><div class="d">حالة الاشتراك، الخطط، والتجديد.</div></a>
+  </div>
+
+  <div class="sec-title">🌐 بوابات العميل</div>
+  <div class="grid">
+    <a class="tile" href="track.html"><div class="ic">🔎</div><div class="t">متابعة الطلب</div><div class="d">يتابع العميل طلبه برقمه وآخر 4 أرقام من جواله.</div></a>
+    <a class="tile" href="catalog.html"><div class="ic">🗂️</div><div class="t">كتالوج العمالة + الحجز</div><div class="d">تصفّح العمالة المتوفرة وعرض السيرة والحجز (عبر رابط المكتب).</div></a>
+  </div>
+
+  <div class="foot">الاستقدام الذكي · Smart Istiqdam</div>
+</div>
+</body>
+</html>

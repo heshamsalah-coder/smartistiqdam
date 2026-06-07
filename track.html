@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>متابعة طلب الاستقدام</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root { --primary:#0C4A45; --bg:#F4F2EC; --card:#fff; --ink:#16211F; --sub:#5C6A66; --line:#E5E1D6; --gold:#B5862A; }
+  * { box-sizing:border-box; font-family:'IBM Plex Sans Arabic',sans-serif; }
+  body { margin:0; background:var(--bg); color:var(--ink); min-height:100vh; }
+  .wrap { max-width:560px; margin:0 auto; padding:32px 16px; }
+  .brand { display:flex; align-items:center; gap:10px; margin-bottom:24px; }
+  .logo { width:42px; height:42px; border-radius:12px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:24px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .muted { color:var(--sub); font-size:13px; margin:0 0 20px; }
+  label { display:block; font-size:13px; color:var(--sub); margin-bottom:6px; }
+  input { width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:12px; background:#FBFAF6; font-size:15px; outline:none; margin-bottom:14px; }
+  input:focus { border-color:var(--primary); }
+  button { width:100%; padding:12px; border:none; border-radius:12px; background:var(--primary); color:#fff; font-weight:700; font-size:15px; cursor:pointer; }
+  button:active { transform:scale(.98); }
+  .err { background:#FEF2F2; color:#B91C1C; padding:10px 12px; border-radius:12px; font-size:13px; margin-bottom:12px; display:none; }
+  .result { margin-top:22px; display:none; }
+  .status-pill { display:inline-flex; align-items:center; gap:6px; background:var(--primary); color:#fff; padding:6px 14px; border-radius:999px; font-weight:700; font-size:14px; }
+  .row { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .row span:first-child { color:var(--sub); }
+  .timeline { margin-top:18px; }
+  .step { display:flex; gap:10px; padding:7px 0; font-size:14px; }
+  .dot { width:18px; height:18px; border-radius:50%; background:var(--primary); color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+  .warranty { margin-top:16px; background:#E3EEEC; color:var(--primary); padding:10px 14px; border-radius:12px; font-weight:600; font-size:13px; }
+  .sec-title { font-weight:700; font-size:14px; margin:18px 0 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div>
+    <div>
+      <div style="font-weight:700">بوابة متابعة الطلب</div>
+      <div style="font-size:12px;color:var(--sub)">تابع حالة طلب الاستقدام بسهولة</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h1>تتبّع طلبك</h1>
+    <p class="muted">أدخل رقم الطلب وآخر 4 أرقام من جوالك المسجّل.</p>
+    <div class="err" id="err"></div>
+    <label>رقم الطلب</label>
+    <input id="orderNo" placeholder="REC-1042" autocomplete="off" />
+    <label>آخر 4 أرقام من الجوال</label>
+    <input id="phone4" placeholder="4567" maxlength="4" inputmode="numeric" />
+    <button id="btn">عرض الحالة</button>
+
+    <div class="result" id="result">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <strong id="rOrder"></strong>
+        <span class="status-pill" id="rStatus"></span>
+      </div>
+      <div class="row"><span>المهنة</span><span id="rProf"></span></div>
+      <div class="row"><span>الجنسية</span><span id="rNat"></span></div>
+      <div class="row"><span>تاريخ الوصول</span><span id="rArr"></span></div>
+      <div class="warranty" id="rWarr" style="display:none"></div>
+
+      <div class="sec-title">مراحل الطلب</div>
+      <div class="timeline" id="rTimeline"></div>
+
+      <div class="sec-title">آخر التحديثات</div>
+      <div id="rUpdates" style="font-size:13px;color:var(--sub)"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin; // نفس الخادم
+const $ = (id) => document.getElementById(id);
+
+$("btn").addEventListener("click", async () => {
+  const orderNo = $("orderNo").value.trim();
+  const phoneLast4 = $("phone4").value.trim();
+  $("err").style.display = "none";
+  $("result").style.display = "none";
+  try {
+    const res = await fetch(API + "/api/public/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderNo, phoneLast4 }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "تعذّر العثور على الطلب");
+    render(data);
+  } catch (e) {
+    $("err").textContent = e.message;
+    $("err").style.display = "block";
+  }
+});
+
+function render(d) {
+  $("rOrder").textContent = "طلب رقم " + d.orderNo;
+  $("rStatus").textContent = d.statusLabel;
+  $("rProf").textContent = d.profession || "—";
+  $("rNat").textContent = d.nationality || "—";
+  $("rArr").textContent = d.arrivalDate || "—";
+  if (d.warranty) {
+    $("rWarr").style.display = "block";
+    $("rWarr").textContent = d.warranty.left >= 0
+      ? `فترة الضمان سارية حتى ${d.warranty.end} (باقٍ ${d.warranty.left} يوم)`
+      : "انتهت فترة الضمان";
+  }
+  $("rTimeline").innerHTML = d.timeline.map((t) =>
+    `<div class="step"><div class="dot">✓</div><div><b>${t.label}</b> <span style="color:var(--sub)">— ${t.at}</span></div></div>`
+  ).join("");
+  $("rUpdates").innerHTML = d.updates.length
+    ? d.updates.slice().reverse().map((u) => `• ${u.message} <span style="color:#9aa3a0">(${u.at})</span>`).join("<br>")
+    : "لا توجد تحديثات بعد.";
+  $("result").style.display = "block";
+}
+</script>
+</body>
+</html>

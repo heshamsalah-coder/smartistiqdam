@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مقال — الاستقدام الذكي</title>
+<meta name="robots" content="index, follow" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--teal:#0C4A45;--gold:#B5862A;--bg:#F4F2EC;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);line-height:1.95;}
+  header{background:var(--teal);padding:14px 0;}
+  .container{max-width:760px;margin:0 auto;padding:0 20px;}
+  header .container{display:flex;align-items:center;gap:10px;}
+  header .logo{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;}
+  header .nm{color:#fff;font-weight:700;}
+  header a{margin-inline-start:auto;color:#CFE0DC;text-decoration:none;font-size:14px;}
+  article{background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px;margin:26px auto;}
+  h1{font-size:28px;color:var(--teal);line-height:1.4;margin-bottom:8px;}
+  .date{color:var(--sub);font-size:13px;margin-bottom:20px;}
+  .body{font-size:16px;white-space:pre-wrap;}
+  .back{display:inline-block;margin-top:22px;color:var(--teal);font-weight:700;text-decoration:none;}
+  .err{text-align:center;color:#B23B3B;font-weight:600;margin:60px auto;}
+</style>
+</head>
+<body>
+<header><div class="container">
+  <span class="logo"><svg viewBox="0 0 64 64" width="60%" height="60%" fill="none"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></span>
+  <span class="nm">الاستقدام الذكي</span>
+  <a href="landing.html">← الرئيسية</a>
+</div></header>
+<div class="container" id="root"></div>
+<script>
+const id=new URLSearchParams(location.search).get("id");
+fetch("/api/public/articles/"+id).then(r=>{if(!r.ok)throw 0;return r.json();}).then(a=>{
+  document.title=a.title+" — الاستقدام الذكي";
+  document.getElementById("root").innerHTML=`<article><h1>${a.title}</h1><div class="date">${a.created_at}</div><div class="body">${(a.body||"").replace(/</g,"&lt;")}</div><a class="back" href="landing.html">← العودة للرئيسية</a></article>`;
+}).catch(()=>{document.getElementById("root").innerHTML='<div class="err">المقال غير متاح.</div>';});
+</script>
+</body>
+</html>

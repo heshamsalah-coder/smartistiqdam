@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الاشتراك والدفع — الاستقدام الذكي</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--teal:#0C4A45;--gold:#B5862A;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--red:#B23B3B;--green:#1F7A4D;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  .top{background:var(--teal);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;}
+  .top svg{width:34px;height:34px}
+  .top h1{font-size:16px;margin:0;font-weight:700;}
+  .top .sub{font-size:11px;color:#9FBDB7;}
+  .wrap{max-width:860px;margin:0 auto;padding:22px 16px 60px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;}
+  .loginCard{max-width:380px;margin:60px auto;}
+  input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-size:14px;margin:6px 0;background:#FAFAF7;}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;}
+  .btn{background:var(--teal);color:#fff;padding:11px 16px;font-size:14px;}
+  .btn.gold{background:var(--gold);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .status{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .pill{display:inline-block;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:700;}
+  .pill.ok{background:#E3F2E8;color:var(--green);}
+  .pill.trial{background:#F6EFDD;color:var(--gold);}
+  .pill.bad{background:#F6E2E2;color:var(--red);}
+  .muted{color:var(--sub);font-size:13px;}
+  h2{font-size:16px;color:var(--teal);margin:0 0 12px;}
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  @media(max-width:640px){.plans{grid-template-columns:1fr;}}
+  .plan{border:1.5px solid var(--line);border-radius:14px;padding:18px;text-align:center;display:flex;flex-direction:column;}
+  .plan.feature{border-color:var(--gold);box-shadow:0 6px 20px rgba(181,134,42,.12);}
+  .plan .nm{font-weight:700;color:var(--teal);}
+  .plan .pr{font-size:26px;font-weight:800;margin:8px 0 2px;}
+  .plan .pr small{font-size:12px;color:var(--sub);font-weight:600;}
+  .plan .vat{font-size:11px;color:var(--sub);margin-bottom:12px;}
+  .plan button{margin-top:auto;width:100%;padding:10px;}
+  .banner{border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:14px;font-weight:600;}
+  .banner.bad{background:#F6E2E2;color:var(--red);}
+  .banner.note{background:#FBF6E8;color:#7A5B16;border:1px solid #EBDCB4;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:right;}
+  th{color:var(--sub);font-weight:600;}
+  .hidden{display:none;}
+  .err{color:var(--red);font-size:13px;margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="top">
+  <svg viewBox="0 0 64 64" fill="none"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D4A23A"/></svg>
+  <div><h1>الاشتراك والدفع</h1><div class="sub">الاستقدام الذكي — إعدادات المكتب</div></div>
+</div>
+
+<div class="wrap">
+  <!-- تسجيل الدخول -->
+  <div id="loginCard" class="card loginCard">
+    <h2>تسجيل دخول المكتب</h2>
+    <input id="u" placeholder="اسم المستخدم" value="supervisor" />
+    <input id="p" type="password" placeholder="كلمة المرور" value="sup123" />
+    <button class="btn" style="width:100%;margin-top:8px" onclick="doLogin()">دخول</button>
+    <div id="loginErr" class="err"></div>
+  </div>
+
+  <!-- المحتوى -->
+  <div id="app" class="hidden">
+    <div id="banner"></div>
+
+    <div class="card">
+      <div class="status">
+        <div>
+          <div class="muted">حالة الاشتراك</div>
+          <div id="statusPill" style="margin-top:6px"></div>
+        </div>
+        <div style="text-align:left">
+          <div class="muted">الخطة الحالية</div>
+          <div id="planNow" style="font-weight:700;color:var(--teal);margin-top:4px"></div>
+          <div id="daysNow" class="muted" style="margin-top:2px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>اختر خطة الاشتراك</h2>
+      <div id="plans" class="plans"></div>
+      <div id="payErr" class="err"></div>
+    </div>
+
+    <div class="card">
+      <h2>سجل المدفوعات</h2>
+      <div id="payments"><div class="muted">لا توجد مدفوعات بعد.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+let token = sessionStorage.getItem("sub_token") || "";
+const $ = (id) => document.getElementById(id);
+
+async function api(path, opts={}){
+  const r = await fetch(API + path, { ...opts, headers:{ "Content-Type":"application/json", ...(token?{Authorization:"Bearer "+token}:{}) , ...(opts.headers||{}) }});
+  const data = await r.json().catch(()=>({}));
+  if(!r.ok) throw Object.assign(new Error(data.error||"خطأ"), {status:r.status, data});
+  return data;
+}
+
+async function doLogin(){
+  $("loginErr").textContent="";
+  try{
+    const out = await api("/api/auth/login",{method:"POST",body:JSON.stringify({username:$("u").value,password:$("p").value})});
+    if(!out.user.officeId){ $("loginErr").textContent="هذا الحساب ليس حساب مكتب."; return; }
+    token = out.token; sessionStorage.setItem("sub_token", token);
+    enterApp();
+  }catch(e){ $("loginErr").textContent = e.message; }
+}
+
+function enterApp(){
+  $("loginCard").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  load();
+}
+
+const STAT = {
+  trialing:{cls:"trial",txt:(d)=>`فترة تجريبية — متبقٍّ ${d} يوماً`},
+  active:{cls:"ok",txt:(d)=>d===null?"اشتراك فعّال — مدى الحياة":`اشتراك فعّال — متبقٍّ ${d} يوماً`},
+  trial_expired:{cls:"bad",txt:()=>"انتهت الفترة التجريبية"},
+  expired:{cls:"bad",txt:()=>"انتهى الاشتراك"},
+  none:{cls:"bad",txt:()=>"لا يوجد اشتراك"},
+};
+
+async function load(){
+  const d = await api("/api/subscription");
+  const s = d.subscription;
+  const meta = STAT[s.status] || STAT.none;
+  $("statusPill").innerHTML = `<span class="pill ${meta.cls}">${meta.txt(s.daysLeft)}</span>`;
+  const names = {monthly:"شهري",yearly:"سنوي",lifetime:"مدى الحياة",trial:"تجريبي"};
+  $("planNow").textContent = names[s.planCode] || "—";
+  $("daysNow").textContent = s.endAt ? ("ينتهي في "+s.endAt) : (s.status==="active"?"بدون تاريخ انتهاء":"");
+
+  // بانر حسب الحالة
+  if(["expired","trial_expired","none"].includes(s.status)){
+    $("banner").innerHTML = `<div class="banner bad">انتهت صلاحية الوصول للأدوات. جدّد اشتراكك لإعادة تفعيل النظام.</div>`;
+  } else if(!d.gatewayReady){
+    $("banner").innerHTML = `<div class="banner note">الدفع الإلكتروني (Tap) غير مفعّل بعد. يمكنك التواصل مع مدير المنصة للتفعيل اليدوي، أو إضافة مفاتيح Tap لتفعيل الدفع الذاتي.</div>`;
+  } else { $("banner").innerHTML=""; }
+
+  // الخطط
+  $("plans").innerHTML = d.plans.map((p)=>`
+    <div class="plan ${p.code==='yearly'?'feature':''}">
+      <div class="nm">${p.name}</div>
+      <div class="pr">${p.total} <small>ر.س</small></div>
+      <div class="vat">${p.price} + ضريبة ${p.vatAmount} ر.س${p.durationDays?` · ${p.durationDays} يوم`:" · دائم"}</div>
+      <button class="btn ${p.code==='yearly'?'gold':''}" onclick="pay('${p.code}')">${["expired","trial_expired","none"].includes(s.status)?"اشترك الآن":"اشترك / جدّد"}</button>
+    </div>`).join("");
+
+  // المدفوعات
+  if(d.payments && d.payments.length){
+    $("payments").innerHTML = `<table><thead><tr><th>التاريخ</th><th>الخطة</th><th>الإجمالي</th><th>الطريقة</th><th>الحالة</th></tr></thead><tbody>`+
+      d.payments.map((p)=>`<tr><td>${p.created_at}</td><td>${names[p.plan_code]||p.plan_code}</td><td>${p.total} ر.س</td><td>${p.provider==='manual'?'تفعيل يدوي':(p.provider||'-')}</td><td>${p.status==='paid'?'مدفوع':p.status}</td></tr>`).join("")+
+      `</tbody></table>`;
+  }
+}
+
+async function pay(planCode){
+  $("payErr").textContent="";
+  try{
+    const out = await api("/api/subscription/checkout",{method:"POST",body:JSON.stringify({planCode})});
+    if(out.url){ window.location.href = out.url; }   // تحويل إلى صفحة دفع Tap
+  }catch(e){
+    if(e.data && e.data.code==="gateway_not_configured")
+      $("payErr").textContent = "الدفع الإلكتروني غير مهيأ بعد. تواصل مع مدير المنصة لتفعيل اشتراكك يدوياً.";
+    else $("payErr").textContent = e.message;
+  }
+}
+
+// التعامل مع العودة من Tap (?tap_id=...)
+async function handleReturn(){
+  const id = new URLSearchParams(location.search).get("tap_id");
+  if(!id || !token) return;
+  try{
+    const out = await api("/api/subscription/verify?tap_id="+encodeURIComponent(id));
+    if(out.paid){ history.replaceState({}, "", location.pathname); }
+  }catch(e){}
+}
+
+(async function init(){
+  if(token){ enterApp(); await handleReturn(); if($("app") && !$("app").classList.contains("hidden")) load(); }
+})();
+</script>
+</body>
+</html>

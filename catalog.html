@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>العمالة المتوفرة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--primary:#0C4A45;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--gold:#B5862A;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  .wrap{max-width:1000px;margin:0 auto;padding:26px 16px 60px;}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .logo{width:44px;height:44px;border-radius:13px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  h1{font-size:20px;margin:14px 0 2px;} .muted{color:var(--sub);font-size:13px;}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0;}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;cursor:pointer;}
+  .chip.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
+  .wcard{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s;}
+  .wcard:hover{box-shadow:0 10px 30px rgba(0,0,0,.10);transform:translateY(-2px);}
+  .ph{height:170px;background:#E3EEEC;display:flex;align-items:center;justify-content:center;}
+  .ph img{width:100%;height:100%;object-fit:cover;}
+  .ph .ini{width:74px;height:74px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;}
+  .body{padding:14px;}
+  .body .nm{font-weight:700;font-size:15px;}
+  .body .meta{color:var(--sub);font-size:13px;margin-top:3px;}
+  .tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;}
+  .tag{background:#E3EEEC;color:var(--primary);border-radius:8px;padding:3px 10px;font-size:12px;font-weight:600;}
+  .view-btn{display:block;text-align:center;margin-top:12px;background:var(--primary);color:#fff;border-radius:10px;padding:9px;font-weight:700;font-size:13px;}
+  .err{background:#FEF2F2;color:#B91C1C;padding:12px 14px;border-radius:12px;font-size:14px;margin-top:20px;}
+  .empty{text-align:center;color:var(--sub);padding:40px;}
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(20,33,31,.55);display:none;align-items:flex-start;justify-content:center;padding:24px 14px;overflow:auto;z-index:50;}
+  .overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:20px;max-width:680px;width:100%;overflow:hidden;}
+  .modal-head{display:flex;gap:14px;align-items:center;padding:20px;border-bottom:1px solid var(--line);}
+  .modal-head .av{width:64px;height:64px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;overflow:hidden;}
+  .modal-head .av img{width:100%;height:100%;object-fit:cover;}
+  .modal-body{padding:20px;}
+  .cv-frame{width:100%;height:380px;border:1px solid var(--line);border-radius:12px;background:#FBFAF6;}
+  .open-cv{display:inline-block;margin-top:8px;color:var(--primary);font-weight:700;font-size:13px;text-decoration:none;}
+  .res{margin-top:18px;border-top:1px solid var(--line);padding-top:16px;}
+  .res input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:#FBFAF6;font-size:15px;outline:none;margin-top:8px;}
+  .btn{width:100%;background:var(--primary);color:#fff;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:15px;cursor:pointer;margin-top:12px;}
+  .btn.gold{background:var(--gold);}
+  .x{margin-right:auto;background:none;border:none;font-size:22px;color:var(--sub);cursor:pointer;}
+  .ok{background:#ECFDF5;color:#047857;padding:12px 14px;border-radius:12px;font-size:14px;margin-top:12px;display:none;}
+  .merr{background:#FEF2F2;color:#B91C1C;padding:10px 13px;border-radius:11px;font-size:13px;margin-top:10px;display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div><div><div style="font-weight:700" id="officeName">العمالة المتوفرة</div><div class="muted">اختر من العمالة المتوفرة واحجز مباشرة</div></div></div>
+  <h1>الجنسيات والعمالة المتوفرة</h1>
+  <div class="muted" id="count"></div>
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+  <div id="msg"></div>
+</div>
+
+<!-- modal: عرض السيرة الذاتية + الحجز -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="av" id="mAv"></div>
+      <div><div style="font-weight:700;font-size:17px" id="mName"></div><div class="muted" id="mMeta"></div></div>
+      <button class="x" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-weight:700;margin-bottom:8px">السيرة الذاتية</div>
+      <div id="mCv"></div>
+      <div class="res" id="resBlock">
+        <div style="font-weight:700">احجز هذه العاملة</div>
+        <div class="muted">أدخل رقم جوالك ليتواصل معك المكتب لإتمام الحجز.</div>
+        <input id="resPhone" inputmode="numeric" placeholder="05xxxxxxxx" />
+        <div class="merr" id="resErr"></div>
+        <button class="btn gold" id="resBtn" onclick="reserve()">تأكيد الحجز</button>
+        <div class="ok" id="resOk"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+const params = new URLSearchParams(location.search);
+const KEY = params.get("key");
+const $ = (id) => document.getElementById(id);
+let DATA = null, filterNat = "all", current = null;
+
+async function load() {
+  if (!KEY) { $("msg").innerHTML = '<div class="err">رابط غير صالح: المفتاح مفقود.</div>'; return; }
+  try {
+    const res = await fetch(`${API}/api/public/catalog?key=${encodeURIComponent(KEY)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "تعذّر تحميل الكتالوج");
+    DATA = data;
+    $("officeName").textContent = data.officeName;
+    renderFilters(); render();
+  } catch (e) { $("msg").innerHTML = `<div class="err">${e.message}</div>`; }
+}
+
+function renderFilters() {
+  const nats = ["all", ...DATA.nationalities];
+  $("filters").innerHTML = nats.map((n) =>
+    `<div class="chip ${n===filterNat?"active":""}" onclick="setFilter('${n}')">${n==="all"?"الكل":n}</div>`).join("");
+}
+function setFilter(n){ filterNat=n; renderFilters(); render(); }
+
+function render() {
+  const list = DATA.workers.filter((w) => filterNat==="all" || w.nationality===filterNat);
+  $("count").textContent = `${list.length} عاملة متوفرة`;
+  if (!list.length) { $("grid").innerHTML = '<div class="empty">لا توجد عمالة متوفرة حالياً ضمن هذا التصنيف.</div>'; return; }
+  $("grid").innerHTML = list.map((w) => `
+    <div class="wcard" onclick="openDetail(${w.id})">
+      <div class="ph">${w.photoUrl ? `<img src="${API}${w.photoUrl}" onerror="this.parentNode.innerHTML='<div class=ini>${(w.name||'؟').slice(0,1)}</div>'"/>` : `<div class="ini">${(w.name||"؟").slice(0,1)}</div>`}</div>
+      <div class="body">
+        <div class="nm">${w.name || "عاملة"}</div>
+        <div class="meta">${w.profession || ""}</div>
+        <div class="tags"><span class="tag">${w.nationality || "—"}</span>${w.age ? `<span class="tag">${w.age} سنة</span>` : ""}</div>
+        <div class="view-btn">عرض السيرة والحجز</div>
+      </div>
+    </div>`).join("");
+}
+
+function openDetail(id) {
+  current = DATA.workers.find((w) => w.id === id);
+  if (!current) return;
+  $("mName").textContent = current.name || "عاملة";
+  $("mMeta").textContent = `${current.profession || ""} · ${current.nationality || ""}${current.age ? " · " + current.age + " سنة" : ""}`;
+  $("mAv").innerHTML = current.photoUrl ? `<img src="${API}${current.photoUrl}"/>` : (current.name || "؟").slice(0, 1);
+  if (current.cvUrl) {
+    const url = API + current.cvUrl;
+    $("mCv").innerHTML = `<iframe class="cv-frame" src="${url}"></iframe><a class="open-cv" href="${url}" target="_blank">فتح السيرة في نافذة جديدة ↗</a>`;
+  } else {
+    $("mCv").innerHTML = '<div class="muted">لا توجد سيرة ذاتية مرفقة لهذه العاملة.</div>';
+  }
+  $("resPhone").value = ""; $("resErr").style.display = "none"; $("resOk").style.display = "none";
+  $("resBtn").style.display = "block"; $("resPhone").style.display = "block";
+  $("overlay").classList.add("open");
+}
+function closeModal(){ $("overlay").classList.remove("open"); }
+$("overlay").addEventListener("click", (e) => { if (e.target.id === "overlay") closeModal(); });
+
+async function reserve() {
+  $("resErr").style.display = "none";
+  const phone = $("resPhone").value.trim();
+  try {
+    const res = await fetch(`${API}/api/public/catalog/reserve`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: KEY, workerId: current.id, phone }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "تعذّر الحجز");
+    $("resBtn").style.display = "none"; $("resPhone").style.display = "none";
+    $("resOk").textContent = data.message; $("resOk").style.display = "block";
+    // أزل العاملة من القائمة محلياً (أصبحت محجوزة)
+    DATA.workers = DATA.workers.filter((w) => w.id !== current.id);
+    setTimeout(() => { closeModal(); renderFilters(); render(); }, 2200);
+  } catch (e) { $("resErr").textContent = e.message; $("resErr").style.display = "block"; }
+}
+
+load();
+</script>
+</body>
+</html>

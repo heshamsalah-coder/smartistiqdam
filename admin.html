@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>لوحة مدير المنصة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+  :root{--primary:#0C4A45;--bg:#F4F2EC;--card:#fff;--ink:#16211F;--sub:#5C6A66;--line:#E5E1D6;--gold:#B5862A;}
+  *{box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  .wrap{max-width:840px;margin:0 auto;padding:28px 16px;}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .logo{width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px;}
+  h1{font-size:19px;margin:0 0 2px;} h2{font-size:15px;margin:0 0 14px;}
+  .muted{color:var(--sub);font-size:13px;}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 5px;}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:#FBFAF6;font-size:14px;outline:none;}
+  input:focus,select:focus{border-color:var(--primary);}
+  button{padding:11px 16px;border:none;border-radius:11px;background:var(--primary);color:#fff;font-weight:700;font-size:14px;cursor:pointer;}
+  button.ghost{background:transparent;color:var(--primary);border:1px solid var(--line);}
+  button:active{transform:scale(.98);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .row>*{flex:1;min-width:140px;}
+  .err{background:#FEF2F2;color:#B91C1C;padding:9px 12px;border-radius:11px;font-size:13px;margin:8px 0;display:none;}
+  .ok{background:#ECFDF5;color:#047857;padding:9px 12px;border-radius:11px;font-size:13px;margin:8px 0;display:none;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th,td{text-align:right;padding:10px 8px;border-bottom:1px solid var(--line);}
+  th{color:var(--sub);font-weight:600;font-size:12px;}
+  .pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .on{background:#ECFDF5;color:#047857;} .off{background:#FEF2F2;color:#B91C1C;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;}
+  #app{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 64 64" width="62%" height="62%" fill="none" style="display:block"><path d="M14 56 V30 a18 18 0 0 1 36 0 V56" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M32 4 L34.2 12.5 L42.5 14.7 L34.2 16.9 L32 25.4 L29.8 16.9 L21.5 14.7 L29.8 12.5 Z" fill="#D8B25A"/></svg></div>
+    <div><div style="font-weight:700">لوحة مدير المنصة</div><div class="muted">إدارة المكاتب والمشرفين</div></div>
+  </div>
+
+  <!-- تسجيل الدخول -->
+  <div class="card" id="loginCard">
+    <h2>تسجيل الدخول</h2>
+    <div class="err" id="loginErr"></div>
+    <label>اسم المستخدم</label><input id="u" value="super" />
+    <label>كلمة المرور</label><input id="p" type="password" value="super123" />
+    <div style="margin-top:14px"><button onclick="doLogin()">دخول</button></div>
+    <p class="muted" style="margin-top:10px">تجريبي: super / super123</p>
+  </div>
+
+  <!-- التطبيق -->
+  <div id="app">
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <a href="admin.html" style="background:#0C4A45;color:#fff;border-radius:10px;padding:9px 16px;font-weight:700;font-size:14px;text-decoration:none">المكاتب</a>
+      <a href="admin-articles.html" style="background:#fff;color:#0C4A45;border:1px solid #0C4A45;border-radius:10px;padding:9px 16px;font-weight:700;font-size:14px;text-decoration:none">المقالات</a>
+      <a href="admin-settings.html" style="background:#fff;color:#0C4A45;border:1px solid #0C4A45;border-radius:10px;padding:9px 16px;font-weight:700;font-size:14px;text-decoration:none">الإعدادات</a>
+    </div>
+    <div class="card">
+      <div class="topbar">
+        <h2 style="margin:0">المكاتب المسجّلة</h2>
+        <button class="ghost" onclick="logout()">خروج</button>
+      </div>
+      <div id="officesBox" class="muted" style="margin-top:12px">…</div>
+    </div>
+
+    <div class="card">
+      <h2>إنشاء مكتب جديد + حساب مشرف</h2>
+      <div class="err" id="cErr"></div><div class="ok" id="cOk"></div>
+      <label>اسم المكتب</label><input id="officeName" placeholder="مثال: مكتب القصيم للاستقدام" />
+      <div class="row">
+        <div><label>اسم المشرف</label><input id="supName" placeholder="الاسم" /></div>
+        <div><label>اسم المستخدم</label><input id="supUser" placeholder="username" /></div>
+        <div><label>كلمة المرور</label><input id="supPass" type="password" /></div>
+      </div>
+      <div style="margin-top:14px"><button onclick="createOffice()">إنشاء المكتب</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+let token = sessionStorage.getItem("rms_admin_token") || null;
+const $ = (id) => document.getElementById(id);
+const show = (el, msg) => { el.textContent = msg; el.style.display = "block"; };
+const hide = (el) => { el.style.display = "none"; };
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token, ...(opts.headers || {}) },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "خطأ");
+  return data;
+}
+
+async function doLogin() {
+  hide($("loginErr"));
+  try {
+    const res = await fetch(API + "/api/auth/login", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: $("u").value, password: $("p").value }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    if (data.user.role !== "super_admin") throw new Error("هذا الحساب ليس مدير منصة.");
+    token = data.token; sessionStorage.setItem("rms_admin_token", token);
+    enterApp();
+  } catch (e) { show($("loginErr"), e.message); }
+}
+
+function logout() { token = null; sessionStorage.removeItem("rms_admin_token"); $("app").style.display = "none"; $("loginCard").style.display = "block"; }
+
+function enterApp() { $("loginCard").style.display = "none"; $("app").style.display = "block"; loadOffices(); }
+
+async function loadOffices() {
+  try {
+    const offices = await api("/api/admin/offices");
+    $("officesBox").innerHTML = `<table><tr><th>#</th><th>المكتب</th><th>المستخدمون</th><th>الطلبات</th><th>العمالة</th><th>رابط الكتالوج</th><th>الاشتراك</th><th>الحالة</th><th>إدارة الاشتراك / المكتب</th></tr>` +
+      offices.map((o) => `<tr>
+        <td>${o.id}</td><td>${o.name}</td><td>${o.users}</td><td>${o.orders}</td><td>${o.workers ?? 0}</td>
+        <td><button class="ghost" style="padding:4px 10px;font-size:12px" onclick="copyCatalog('${o.catalogKey}')">نسخ الرابط</button></td>
+        <td>${subPill(o.subscription)}</td>
+        <td><span class="pill ${o.active ? "on" : "off"}">${o.active ? "نشط" : "موقوف"}</span></td>
+        <td style="white-space:nowrap">
+          <button class="ghost" style="padding:5px 9px;font-size:12px" onclick="grantTrial(${o.id})">تجربة ١٤ي</button>
+          <select id="pl-${o.id}" style="padding:5px;border-radius:8px;border:1px solid #E5E1D6;font-size:12px"><option value="monthly">شهري</option><option value="yearly">سنوي</option><option value="lifetime">مدى الحياة</option></select>
+          <button class="ghost" style="padding:5px 9px;font-size:12px" onclick="paymentLink(${o.id})">رابط سداد</button>
+          <button class="ghost" style="padding:5px 9px;font-size:12px" onclick="toggleOffice(${o.id},${!o.active})">${o.active ? "إيقاف" : "تفعيل"}</button>
+        </td>
+      </tr>`).join("") + `</table>`;
+  } catch (e) { $("officesBox").textContent = e.message; }
+}
+
+function subPill(s) {
+  if (!s) return "—";
+  const active = s.status === "trialing" || s.status === "active";
+  const map = { trialing: "تجريبي", active: "فعّال", trial_expired: "منتهٍ", expired: "منتهٍ", none: "بلا اشتراك" };
+  const label = map[s.status] || "—";
+  const days = s.daysLeft === null ? "دائم" : (active ? `${s.daysLeft}ي` : "");
+  return `<span class="pill ${active ? "on" : "off"}">${label}${days ? " · " + days : ""}</span>`;
+}
+
+async function grantTrial(id) {
+  if (!confirm("منح/تجديد فترة تجريبية ١٤ يوماً لهذا المكتب؟")) return;
+  try { await api(`/api/admin/offices/${id}/trial`, { method: "POST", body: JSON.stringify({ days: 14 }) }); loadOffices(); }
+  catch (e) { alert(e.message); }
+}
+
+async function paymentLink(id) {
+  const code = document.getElementById("pl-" + id).value;
+  try {
+    const out = await api(`/api/admin/offices/${id}/payment-link`, { method: "POST", body: JSON.stringify({ planCode: code }) });
+    try { await navigator.clipboard.writeText(out.url); } catch (e) {}
+    prompt("رابط السداد (انسخه وأرسله للمكتب — يُفعّل الاشتراك تلقائياً عند الدفع):", out.url);
+  } catch (e) {
+    if (e.data && e.data.code === "gateway_not_configured")
+      alert("بوابة الدفع (Tap) غير مهيأة بعد. أضف TAP_SECRET_KEY لإنشاء روابط السداد.");
+    else alert(e.message);
+  }
+}
+
+async function toggleOffice(id, active) {
+  try { await api(`/api/admin/offices/${id}`, { method: "PATCH", body: JSON.stringify({ active }) }); loadOffices(); }
+  catch (e) { alert(e.message); }
+}
+
+function copyCatalog(key) {
+  const url = location.origin + "/catalog.html?key=" + key;
+  navigator.clipboard?.writeText(url);
+  alert("تم نسخ رابط الكتالوج:\n" + url);
+}
+
+async function createOffice() {
+  hide($("cErr")); hide($("cOk"));
+  try {
+    const data = await api("/api/admin/offices", {
+      method: "POST",
+      body: JSON.stringify({
+        officeName: $("officeName").value,
+        supervisor: { name: $("supName").value, username: $("supUser").value, password: $("supPass").value },
+      }),
+    });
+    show($("cOk"), `تم إنشاء «${data.officeName}» ومشرفه «${data.supervisor.username}».`);
+    $("officeName").value = $("supName").value = $("supUser").value = $("supPass").value = "";
+    loadOffices();
+  } catch (e) { show($("cErr"), e.message); }
+}
+
+if (token) enterApp();
+</script>
+</body>
+</html>
